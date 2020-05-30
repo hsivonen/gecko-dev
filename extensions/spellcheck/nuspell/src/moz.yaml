@@ -1,0 +1,15 @@
+# Version of this schema
+schema: 1
+
+bugzilla:
+  product: "Core"
+  component: "Spelling checker"
+
+origin:
+  name: "Nuspell"
+  description: "Spellchecking library"
+
+  url: "http://nuspell.github.io/"
+  license: "LGPL-3"
+
+  release: "3.1.1"

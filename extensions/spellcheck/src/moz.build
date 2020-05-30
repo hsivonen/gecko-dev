@@ -20,8 +20,8 @@ XPCOM_MANIFESTS += [
 FINAL_LIBRARY = 'xul'
 
 LOCAL_INCLUDES += [
-    '../hunspell/glue',
-    '../hunspell/src',
+    '../nuspell/glue',
+    '../nuspell/src',
     '/dom/base',
 ]
 EXPORTS.mozilla += [
