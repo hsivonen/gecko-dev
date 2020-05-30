@@ -50,20 +50,20 @@ function RunTest() {
   dir.append("tests");
   dir.append("chrome");
 
-  var hunspell = Cc["@mozilla.org/spellchecker/engine;1"]
+  var spellcheckingengine = Cc["@mozilla.org/spellchecker/engine;1"]
     .getService(Ci.mozISpellCheckingEngine);
 
   // install base dictionary
   var base = dir.clone();
   base.append("base");
   ok(base.exists());
-  hunspell.addDirectory(base);
+  spellcheckingengine.addDirectory(base);
 
   // install map dictionary
   var map = dir.clone();
   map.append("map");
   ok(map.exists());
-  hunspell.addDirectory(map);
+  spellcheckingengine.addDirectory(map);
 
   const {onSpellCheck} = ChromeUtils.import(
     "resource://testing-common/AsyncSpellCheckTestHelper.jsm");
@@ -96,7 +96,7 @@ function RunTest() {
         is(getCurrentDictionary(editor), "maputf", "current dictionary");
 
         // uninstall map dictionary
-        hunspell.removeDirectory(map);
+        spellcheckingengine.removeDirectory(map);
 
         // Focus again, so the spelling gets updated.
         textbox.blur();
@@ -113,7 +113,7 @@ function RunTest() {
           is(dicts.indexOf("maputf"), -1, "map is unavailable");
 
           // uninstall base dictionary
-          hunspell.removeDirectory(base);
+          spellcheckingengine.removeDirectory(base);
 
           onSpellCheck(textbox, function () {
             SimpleTest.finish();
