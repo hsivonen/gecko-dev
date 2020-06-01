@@ -6,12 +6,9 @@
 
 UNIFIED_SOURCES += [
     'mozNuspell.cpp',
-    'mozNuspellFileMgr.cpp',
     'RemoteSpellCheckEngineChild.cpp',
     'RemoteSpellCheckEngineParent.cpp',
 ]
-
-DEFINES['NUSPELL_STATIC'] = True
 
 FINAL_LIBRARY = 'xul'
 
@@ -22,9 +19,6 @@ LOCAL_INCLUDES += [
 ]
 
 include('/ipc/chromium/chromium-config.mozbuild')
-include('common.mozbuild')
-
-NuspellIncludes()
 
 IPDL_SOURCES = [
     'PRemoteSpellcheckEngine.ipdl',
@@ -34,9 +28,3 @@ EXPORTS.mozilla += [
      'RemoteSpellCheckEngineChild.h',
      'RemoteSpellCheckEngineParent.h',
 ]
-
-if CONFIG['CC_TYPE'] in ('clang', 'clang-cl'):
-    CXXFLAGS += [
-        # We force-include mozNuspellAllocator.h from third-party code.
-        '-Wno-undefined-var-template',
-    ]

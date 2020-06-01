@@ -1,61 +1,20 @@
-/******* BEGIN LICENSE BLOCK *******TODO UPDATE
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
+/* Copyright 2020 Sander van Geloven, Dimitrij Mijoski
  *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * This file is part of Nuspell.
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ * Nuspell is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * The Initial Developers of the Original Code are Kevin Hendricks (MySpell)
- * and László Németh (Hunspell). Portions created by the Initial Developers
- * are Copyright (C) 2002-2005 the Initial Developers. All Rights Reserved.
+ * Nuspell is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
  *
- * Contributor(s): Kevin Hendricks (kevin.hendricks@sympatico.ca)
- *                 David Einstein (deinst@world.std.com)
- *                 Michiel van Leeuwen (mvl@exedo.nl)
- *                 Caolan McNamara (cmc@openoffice.org)
- *                 László Németh (nemethl@gyorsposta.hu)
- *                 Davide Prina
- *                 Giuseppe Modugno
- *                 Gianluca Turconi
- *                 Simon Brouwer
- *                 Noll Janos
- *                 Biro Arpad
- *                 Goldman Eleonora
- *                 Sarlos Tamas
- *                 Bencsath Boldizsar
- *                 Halacsy Peter
- *                 Dvornik Laszlo
- *                 Gefferth Andras
- *                 Nagy Viktor
- *                 Varga Daniel
- *                 Chris Halls
- *                 Rene Engelhard
- *                 Bram Moolenaar
- *                 Dafydd Jones
- *                 Harri Pitkanen
- *                 Andras Timar
- *                 Tor Lillqvist
- *                 Jesper Kristensen (mail@jesperkristensen.dk)
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- ******* END LICENSE BLOCK *******/
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Nuspell.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "mozNuspell.h"
 #include "nsReadableUtils.h"
@@ -71,7 +30,12 @@
 #include "nsNetUtil.h"
 #include "mozilla/dom/ContentParent.h"
 #include "mozilla/Components.h"
-#include <fstream>
+#include <sstream>
+#include "nsReadLine.h"
+#include "nsIInputStream.h"
+#include "nsContentUtils.h"
+#include "nsILoadInfo.h"
+#include "nsNetUtil.h"
 
 using mozilla::dom::ContentParent;
 using namespace mozilla;
@@ -98,14 +62,9 @@ NS_IMPL_COMPONENT_FACTORY(mozNuspell) {
   return nullptr;
 }
 
-template <>
-mozilla::CountingAllocatorBase<NuspellAllocator>::AmountType
-    mozilla::CountingAllocatorBase<NuspellAllocator>::sAmount(0);
-
 mozNuspell::mozNuspell() : mNuspell() {
 #ifdef DEBUG
-  // There must be only one instance of this class: it reports memory based on
-  // a single static count in NuspellAllocator.
+  // There must be only one instance of this class.
   static bool hasRun = false;
   MOZ_ASSERT(!hasRun);
   hasRun = true;
@@ -130,7 +89,6 @@ mozNuspell::~mozNuspell() {
   mozilla::UnregisterWeakMemoryReporter(this);
 
   mPersonalDictionary = nullptr;
-  //TODO REMOVE delete mNuspell;
 }
 
 NS_IMETHODIMP
@@ -146,19 +104,15 @@ mozNuspell::GetDictionary(nsAString& aDictionary) {
 NS_IMETHODIMP
 mozNuspell::SetDictionary(const nsAString& aDictionary) {
   if (aDictionary.IsEmpty()) {
-    //TODO REMOVE delete mNuspell;
-    //TODO REMOVE, SEE NEXT mNuspell = nullptr;
-    mNuspell = Dictionary();
+    mNuspell = nuspell::Dictionary();
     mDictionary.Truncate();
     mAffixFileName.Truncate();
-    mDecoder = nullptr;
-    mEncoder = nullptr;
 
     return NS_OK;
   }
 
   nsIURI* affFile = mDictionaries.GetWeak(aDictionary);
-  if (!affFile) {
+  if (!affFile) { //TODO All xpcshell unit tests fails here.
     return NS_ERROR_FILE_NOT_FOUND;
   }
 
@@ -184,19 +138,65 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
   mDictionary = aDictionary;
   mAffixFileName = affFileName;
 
-  auto affStr = std::fstream(affFileName.get());
-  auto dictStr = std::fstream(dictFileName.get());
-
-  mNuspell = nuspell::Dictionary::load_from_aff_dic(affStr, dictStr);
-  //TODO if (!mNuspell) return NS_ERROR_OUT_OF_MEMORY;
-
-  auto encoding =
-      mozilla::Encoding::ForLabelNoReplacement(MakeSpan("UTF-8", 6));//TODO mNuspell.get_dict_encoding());
-  if (!encoding) {
-    return NS_ERROR_UCONV_NOCONV;
+  auto affStr = std::stringstream();
+  nsCOMPtr<nsIURI> affUri;
+  rv = NS_NewURI(getter_AddRefs(affUri), affFileName.get());
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIChannel> affChannel;
+  rv = NS_NewChannel(getter_AddRefs(affChannel), affUri,
+                        nsContentUtils::GetSystemPrincipal(),
+                        nsILoadInfo::SEC_REQUIRE_SAME_ORIGIN_DATA_INHERITS,
+                        nsIContentPolicy::TYPE_OTHER);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIInputStream> mAffStream;
+  rv = affChannel->Open(getter_AddRefs(mAffStream));
+  NS_ENSURE_SUCCESS(rv, rv);
+  int affNumLines = 0;
+  nsCString affLine; //TODO nsCString or nsAutoCString
+  nsLineBuffer<char> affLineBuffer;
+  while (mAffStream) {
+    bool more;
+    rv = NS_ReadLine(mAffStream.get(), &affLineBuffer, affLine, &more);
+    NS_ENSURE_SUCCESS(rv, rv);
+    affStr << affLine.get() << '\n';
+    ++affNumLines;
+    if (!more) {
+      mAffStream = nullptr;
+      break;
+    }
   }
-  mEncoder = encoding->NewEncoder();
-  mDecoder = encoding->NewDecoderWithoutBOMHandling();
+
+  auto dictStr = std::stringstream();
+  nsCOMPtr<nsIURI> dictUri;
+  rv = NS_NewURI(getter_AddRefs(dictUri), dictFileName.get());
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIChannel> dictChannel;
+  rv = NS_NewChannel(getter_AddRefs(dictChannel), dictUri,
+                        nsContentUtils::GetSystemPrincipal(),
+                        nsILoadInfo::SEC_REQUIRE_SAME_ORIGIN_DATA_INHERITS,
+                        nsIContentPolicy::TYPE_OTHER);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIInputStream> mdictStream;
+  rv = dictChannel->Open(getter_AddRefs(mdictStream));
+  NS_ENSURE_SUCCESS(rv, rv);
+  int dictNumLines = 0;
+  nsCString dictLine; //TODO nsCString or nsAutoCString
+  nsLineBuffer<char> dictLineBuffer;
+  while (mdictStream) {
+    bool more;
+    rv = NS_ReadLine(mdictStream.get(), &dictLineBuffer, dictLine, &more);
+    NS_ENSURE_SUCCESS(rv, rv);
+    dictStr << dictLine.get() << '\n';
+    ++dictNumLines;
+    if (!more) {
+      mdictStream = nullptr;
+      break;
+    }
+  }
+
+  affStr.seekg(0);
+  dictStr.seekg(0);
+  mNuspell = nuspell::Dictionary::load_from_aff_dic(affStr, dictStr);
 
   return NS_OK;
 }
@@ -355,43 +355,11 @@ mozNuspell::LoadDictionariesFromDir(nsIFile* aDir) {
   return NS_OK;
 }
 
-nsresult mozNuspell::ConvertCharset(const nsAString& aStr, std::string& aDst) {
-  if (NS_WARN_IF(!mEncoder)) {
-    return NS_ERROR_NOT_INITIALIZED;
-  }
-
-  auto src = MakeSpan(aStr.BeginReading(), aStr.Length());
-  CheckedInt<size_t> needed =
-      mEncoder->MaxBufferLengthFromUTF16WithoutReplacement(src.Length());
-  if (!needed.isValid()) {
-    return NS_ERROR_OUT_OF_MEMORY;
-  }
-
-  aDst.resize(needed.value());
-
-  char* dstPtr = &aDst[0];
-  auto dst = MakeSpan(reinterpret_cast<uint8_t*>(dstPtr), needed.value());
-
-  uint32_t result;
-  size_t read;
-  size_t written;
-  Tie(result, read, written) =
-      mEncoder->EncodeFromUTF16WithoutReplacement(src, dst, true);
-  Unused << read;
-  MOZ_ASSERT(result != kOutputFull);
-  if (result != kInputEmpty) {
-    return NS_ERROR_UENC_NOMAPPING;
-  }
-  aDst.resize(written);
-  mEncoder->Encoding()->NewEncoderInto(*mEncoder);
-  return NS_OK;
-}
-
 NS_IMETHODIMP
 mozNuspell::CollectReports(nsIHandleReportCallback* aHandleReport,
                             nsISupports* aData, bool aAnonymize) {
   MOZ_COLLECT_REPORT("explicit/spell-check", KIND_HEAP, UNITS_BYTES,
-                     NuspellAllocator::MemoryAllocated(),
+                     0,
                      "Memory used by the spell-checking engine.");
 
   return NS_OK;
@@ -402,14 +370,13 @@ mozNuspell::Check(const nsAString& aWord, bool* aResult) {
   if (NS_WARN_IF(!aResult)) {
     return NS_ERROR_INVALID_ARG;
   }
-  //TODO NS_ENSURE_TRUE(mNuspell, NS_ERROR_FAILURE);
 
-  std::string charsetWord;
-  nsresult rv = ConvertCharset(aWord, charsetWord);
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ConvertUTF16toUTF8 u8word(aWord);
+  std::string charsetWord(u8word.Data(), u8word.Length());
 
   *aResult = mNuspell.spell(charsetWord);
 
+  nsresult rv = NS_OK;
   if (!*aResult && mPersonalDictionary)
     rv = mPersonalDictionary->Check(aWord, aResult);
 
@@ -418,25 +385,18 @@ mozNuspell::Check(const nsAString& aWord, bool* aResult) {
 
 NS_IMETHODIMP
 mozNuspell::Suggest(const nsAString& aWord, nsTArray<nsString>& aSuggestions) {
-//TODO  NS_ENSURE_TRUE(mNuspell, NS_ERROR_FAILURE);
   MOZ_ASSERT(aSuggestions.IsEmpty());
 
-  std::string charsetWord;
-  nsresult rv = ConvertCharset(aWord, charsetWord);
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ConvertUTF16toUTF8 u8word(aWord);
+  std::string charsetWord(u8word.Data(), u8word.Length());
 
   std::vector<std::string> suggestions = std::vector<std::string>();
   mNuspell.suggest(charsetWord, suggestions);
 
   if (!suggestions.empty()) {
     aSuggestions.SetCapacity(suggestions.size());
-    for (Span<const char> charSrc : suggestions) {
-      // Convert the suggestion to utf16
-      auto src = AsBytes(charSrc);
-      rv = mDecoder->Encoding()->DecodeWithoutBOMHandling(
-          src, *aSuggestions.AppendElement());
-      NS_ENSURE_SUCCESS(rv, rv);
-      mDecoder->Encoding()->NewDecoderWithoutBOMHandlingInto(*mDecoder);
+    for (auto& src : suggestions) {
+      aSuggestions.AppendElement(NS_ConvertUTF8toUTF16(src.data(), src.size()));
     }
   }
 
