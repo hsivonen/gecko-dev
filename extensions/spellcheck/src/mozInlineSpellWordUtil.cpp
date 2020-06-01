@@ -174,7 +174,7 @@ static nsINode* FindNextTextNode(nsINode* aNode, int32_t aOffset,
     checkNode = child;
   } else {
     // aOffset was beyond the end of the child list.
-    // goto next node after the last descendant of aNode in
+    // go to next node after the last descendant of aNode in
     // a preorder DOM traversal.
     checkNode = aNode->GetNextNonChildNode(aRoot);
   }
@@ -305,7 +305,7 @@ nsresult mozInlineSpellWordUtil::GetRangeForWord(nsINode* aWordNode,
   return MakeRangeForWord(mRealWords[wordIndex], aRange);
 }
 
-// This is to fix characters that the spellchecker may not like
+// This is to fix characters that the spelling checker may not like
 static void NormalizeWord(const nsAString& aInput, int32_t aPos, int32_t aLen,
                           nsAString& aOutput) {
   aOutput.Truncate();
@@ -315,7 +315,7 @@ static void NormalizeWord(const nsAString& aInput, int32_t aPos, int32_t aLen,
     // remove ignorable characters from the word
     if (IsIgnorableCharacter(ch)) continue;
 
-    // the spellchecker doesn't handle curly apostrophes in all languages
+    // the spelling checker doesn't handle curly apostrophes in all languages
     if (ch == 0x2019) {  // RIGHT SINGLE QUOTATION MARK
       ch = '\'';
     }
@@ -327,7 +327,7 @@ static void NormalizeWord(const nsAString& aInput, int32_t aPos, int32_t aLen,
 // mozInlineSpellWordUtil::GetNextWord
 //
 //    FIXME-optimization: we shouldn't have to generate a range every single
-//    time. It would be better if the inline spellchecker didn't require a
+//    time. It would be better if the inline spelling checker didn't require a
 //    range unless the word was misspelled. This may or may not be possible.
 
 nsresult mozInlineSpellWordUtil::GetNextWord(nsAString& aText,
@@ -466,7 +466,7 @@ CharClass WordSplitState<T>::ClassifyCharacter(int32_t aIndex,
     if (aIndex == 0) return CHAR_CLASS_SEPARATOR;
     if (ClassifyCharacter(aIndex - 1, false) != CHAR_CLASS_WORD)
       return CHAR_CLASS_SEPARATOR;
-    // If the previous charatcer is a word-char, make sure that it's not a
+    // If the previous character is a word-char, make sure that it's not a
     // special dot character.
     if (mDOMWordText[aIndex - 1] == '.') return CHAR_CLASS_SEPARATOR;
 
@@ -477,7 +477,7 @@ CharClass WordSplitState<T>::ClassifyCharacter(int32_t aIndex,
 
     if (ClassifyCharacter(aIndex + 1, false) != CHAR_CLASS_WORD)
       return CHAR_CLASS_SEPARATOR;
-    // If the next charatcer is a word-char, make sure that it's not a
+    // If the next character is a word-char, make sure that it's not a
     // special dot character.
     if (mDOMWordText[aIndex + 1] == '.') return CHAR_CLASS_SEPARATOR;
 
@@ -486,7 +486,7 @@ CharClass WordSplitState<T>::ClassifyCharacter(int32_t aIndex,
   }
 
   // The dot character, if appearing at the end of a word, should
-  // be considered part of that word.  Example: "etc.", or
+  // be considered part of that word. Example: "etc.", or
   // abbreviations
   if (aIndex > 0 && mDOMWordText[aIndex] == '.' &&
       mDOMWordText[aIndex - 1] != '.' &&
@@ -499,7 +499,8 @@ CharClass WordSplitState<T>::ClassifyCharacter(int32_t aIndex,
       charCategory == nsUGenCategory::kOther ||
       charCategory == nsUGenCategory::kPunctuation ||
       charCategory == nsUGenCategory::kSymbol) {
-    // Don't break on hyphens, as hunspell handles them on its own.
+    // Don't break on hyphens, as spelling checker engine handles them on its
+    // own.
     if (aIndex > 0 && mDOMWordText[aIndex] == '-' &&
         mDOMWordText[aIndex - 1] != '-' &&
         ClassifyCharacter(aIndex - 1, false) == CHAR_CLASS_WORD) {
@@ -558,9 +559,9 @@ bool WordSplitState<T>::IsSpecialWord() const {
       // classifying, e.g. "@home" as an email address
 
       // Use this condition to only accept words with '@' in the middle of
-      // them. It works, but the inlinespellcker doesn't like this. The problem
-      // is that you type "fhsgfh@" that's a misspelled word followed by a
-      // symbol, but when you type another letter "fhsgfh@g" that first word
+      // them. It works, but the inline spelling checker doesn't like this. The
+      // problem is that you type "fhsgfh@" that's a misspelled word followed by
+      // a symbol, but when you type another letter "fhsgfh@g" that first word
       // need to be unmarked misspelled. It doesn't do this. it only checks the
       // current position for potentially removing a spelling range.
       if (i > 0 && ClassifyCharacter(i - 1, false) == CHAR_CLASS_WORD &&
@@ -721,7 +722,7 @@ static bool IsBreakElement(nsINode* aNode) {
   }
 
   // If we don't have a frame, we don't consider ourselves a break
-  // element.  In particular, words can span us.
+  // element. In particular, words can span us.
   nsIFrame* frame = element->GetPrimaryFrame();
   if (!frame) {
     return false;
@@ -732,7 +733,7 @@ static bool IsBreakElement(nsINode* aNode) {
   // XXXbz should replaced inlines be break elements, though?
   // Also should inline-block and such be break elements?
   //
-  // FIXME(emilio): We should teach the spell checker to deal with generated
+  // FIXME(emilio): We should teach the spelling checker to deal with generated
   // content (it doesn't at all), then remove the IsListItem() check, as there
   // could be no marker, etc...
   return !disp->IsInlineFlow() || disp->IsListItem();

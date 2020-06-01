@@ -30,7 +30,7 @@
 #define MOZ_PERSONAL_DICT_NAME "persdict.dat"
 
 /**
- * This is the most braindead implementation of a personal dictionary possible.
+ * This is the most brain-dead implementation of a personal dictionary possible.
  * There is not much complexity needed, though.  It could be made much faster,
  * and probably should, but I don't see much need for more in terms of
  * interface.

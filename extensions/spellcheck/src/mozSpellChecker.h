@@ -37,7 +37,7 @@ class mozSpellChecker final {
   }
 
   /**
-   * Tells the spellchecker what document to check.
+   * Tells the spelling checker what document to check.
    * @param aDoc is the document to check.
    * @param aFromStartOfDoc If true, start check from beginning of document,
    * if false, start check from current cursor position.
@@ -113,12 +113,12 @@ class mozSpellChecker final {
 
   /**
    * Returns the list of strings representing the dictionaries
-   * the spellchecker supports. It was suggested that the strings
+   * the spelling checker supports. It was suggested that the strings
    * returned be in the RFC 1766 format. This format looks something
    * like <ISO 639 language code>-<ISO 3166 country code>.
    * For example: en-US
    * @param aDictionaryList is an array of nsStrings that represent the
-   * dictionaries supported by the spellchecker.
+   * dictionaries supported by the spelling checker.
    */
   nsresult GetDictionaryList(nsTArray<nsString>* aDictionaryList);
 
@@ -131,15 +131,15 @@ class mozSpellChecker final {
   nsresult GetCurrentDictionary(nsAString& aDictionary);
 
   /**
-   * Tells the spellchecker to use a specific dictionary.
+   * Tells the spelling checker to use a specific dictionary.
    * @param aDictionary a string that is in the list returned
    * by GetDictionaryList() or an empty string. If aDictionary is
-   * empty string, spellchecker will be disabled.
+   * empty string, spelling checker will be disabled.
    */
   nsresult SetCurrentDictionary(const nsAString& aDictionary);
 
   /**
-   * Tells the spellchecker to use a specific dictionary from list.
+   * Tells the spelling checker to use a specific dictionary from list.
    * @param aList  a preferred dictionary list
    */
   RefPtr<mozilla::GenericPromise> SetCurrentDictionaryFromList(
@@ -177,4 +177,4 @@ class mozSpellChecker final {
 
   friend class mozilla::RemoteSpellcheckEngineChild;
 };
-#endif  // mozSpellChecker_h__
+#endif

@@ -1,4 +1,4 @@
-# With MAP suggestion, Hunspell can add missing accents to a word.
+# With MAP suggestion, spelling checker can add missing accents to a word.
 
 SET UTF-8
 

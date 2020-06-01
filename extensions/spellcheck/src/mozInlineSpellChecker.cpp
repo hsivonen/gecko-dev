@@ -6,7 +6,7 @@
 
 /**
  * This class is called by the editor to handle spellchecking after various
- * events. The main entrypoint is SpellCheckAfterEditorChange, which is called
+ * events. The main entry point is SpellCheckAfterEditorChange, which is called
  * when the text is changed.
  *
  * It is VERY IMPORTANT that we do NOT do any operations that might cause DOM
@@ -81,7 +81,7 @@ using namespace mozilla::ipc;
 // The maximum number of words to check word via IPC.
 #define INLINESPELL_MAXIMUM_CHUNKED_WORDS_PER_TASK 25
 
-// These notifications are broadcast when spell check starts and ends.  STARTED
+// These notifications are broadcast when spellcheck starts and ends. STARTED
 // must always be followed by ENDED.
 #define INLINESPELL_STARTED_TOPIC "inlineSpellChecker-spellCheck-started"
 #define INLINESPELL_ENDED_TOPIC "inlineSpellChecker-spellCheck-ended"
@@ -315,8 +315,8 @@ nsresult mozInlineSpellStatus::FinishInitOnEvent(
 //
 //    Notice that we don't set mNoCheckRange. We check here whether the cursor
 //    is in the word that needs checking, so it isn't necessary. Plus, the
-//    spellchecker isn't guaranteed to only check the given word, and it could
-//    remove the underline from the new word under the cursor.
+//    spelling checker isn't guaranteed to only check the given word, and it
+//    could remove the underline from the new word under the cursor.
 
 nsresult mozInlineSpellStatus::FinishNavigationEvent(
     mozInlineSpellWordUtil& aWordUtil) {
@@ -383,8 +383,8 @@ nsresult mozInlineSpellStatus::FinishNavigationEvent(
 //
 //    Given the mAnchorRange object, computes the range of the word it is on
 //    (if any) and fills that range into mNoCheckRange. This is used for
-//    change and navigation events to know which word we should skip spell
-//    checking on
+//    change and navigation events to know which word we should skip
+//    spellchecking on
 
 nsresult mozInlineSpellStatus::FillNoCheckRangeFromAnchor(
     mozInlineSpellWordUtil& aWordUtil) {
@@ -401,7 +401,7 @@ nsresult mozInlineSpellStatus::FillNoCheckRangeFromAnchor(
 // mozInlineSpellStatus::GetDocument
 //
 //    Returns the Document object for the document for the
-//    current spellchecker.
+//    current spelling checker.
 
 Document* mozInlineSpellStatus::GetDocument() const {
   if (!mSpellChecker->mTextEditor) {
@@ -414,7 +414,7 @@ Document* mozInlineSpellStatus::GetDocument() const {
 // mozInlineSpellStatus::PositionToCollapsedRange
 //
 //    Converts a given DOM position to a collapsed range covering that
-//    position. We use ranges to store DOM positions becuase they stay
+//    position. We use ranges to store DOM positions because they stay
 //    updated as the DOM is changed.
 
 already_AddRefed<nsRange> mozInlineSpellStatus::PositionToCollapsedRange(
@@ -447,7 +447,7 @@ class mozInlineSpellResume : public Runnable {
   }
 
   NS_IMETHOD Run() override {
-    // Discard the resumption if the spell checker was disabled after the
+    // Discard the resumption if the spelling checker was disabled after the
     // resumption was scheduled.
     if (mDisabledAsyncToken == mStatus->mSpellChecker->mDisabledAsyncToken) {
       mStatus->mSpellChecker->ResumeCheck(std::move(mStatus));
@@ -559,17 +559,17 @@ nsresult mozInlineSpellChecker::Cleanup(bool aDestroyingFrames) {
     rv = UnregisterEventListeners();
   }
 
-  // Notify ENDED observers now.  If we wait to notify as we normally do when
+  // Notify ENDED observers now. If we wait to notify as we normally do when
   // these async operations finish, then in the meantime the editor may create
-  // another inline spell checker and cause more STARTED and ENDED
-  // notifications to be broadcast.  Interleaved notifications for the same
-  // editor but different inline spell checkers could easily confuse
-  // observers.  They may receive two consecutive STARTED notifications for
+  // another inline spelling checker and cause more STARTED and ENDED
+  // notifications to be broadcast. Interleaved notifications for the same
+  // editor but different inline spelling checkers could easily confuse
+  // observers. They may receive two consecutive STARTED notifications for
   // example, which we guarantee will not happen.
 
   RefPtr<TextEditor> textEditor = std::move(mTextEditor);
   if (mPendingSpellCheck) {
-    // Cancel the pending editor spell checker initialization.
+    // Cancel the pending editor spelling checker initialization.
     mPendingSpellCheck = nullptr;
     mPendingInitEditorSpellCheckCallback->Cancel();
     mPendingInitEditorSpellCheckCallback = nullptr;
@@ -577,7 +577,7 @@ nsresult mozInlineSpellChecker::Cleanup(bool aDestroyingFrames) {
   }
 
   // Increment this token so that pending UpdateCurrentDictionary calls and
-  // scheduled spell checks are discarded when they finish.
+  // scheduled spellchecks are discarded when they finish.
   mDisabledAsyncToken++;
 
   if (mNumPendingUpdateCurrentDictionary > 0) {
@@ -588,7 +588,7 @@ nsresult mozInlineSpellChecker::Cleanup(bool aDestroyingFrames) {
   }
   if (mNumPendingSpellChecks > 0) {
     // If mNumPendingSpellChecks is still > 0 at this point, the remainder is
-    // pending scheduled spell checks.
+    // pending scheduled spellchecks.
     ChangeNumPendingSpellChecks(-mNumPendingSpellChecks, textEditor);
   }
 
@@ -634,8 +634,8 @@ mozInlineSpellChecker::UpdateCanEnableInlineSpellChecking() {
 
 // mozInlineSpellChecker::RegisterEventListeners
 //
-//    The inline spell checker listens to mouse events and keyboard navigation
-//    events.
+//    The inline spelling checker listens to mouse events and keyboard
+//    navigation events.
 
 nsresult mozInlineSpellChecker::RegisterEventListeners() {
   if (NS_WARN_IF(!mTextEditor)) {
@@ -700,7 +700,7 @@ mozInlineSpellChecker::SetEnableRealTimeSpell(bool aEnabled) {
   }
 
   if (mPendingSpellCheck) {
-    // The editor spell checker is already being initialized.
+    // The editor spelling checker is already being initialized.
     return NS_OK;
   }
 
@@ -725,7 +725,7 @@ mozInlineSpellChecker::SetEnableRealTimeSpell(bool aEnabled) {
 nsresult mozInlineSpellChecker::EditorSpellCheckInited() {
   NS_ASSERTION(mPendingSpellCheck, "Spell check should be pending!");
 
-  // spell checking is enabled, register our event listeners to track navigation
+  // spellchecking is enabled, register our event listeners to track navigation
   RegisterEventListeners();
 
   mSpellCheck = mPendingSpellCheck;
@@ -740,8 +740,8 @@ nsresult mozInlineSpellChecker::EditorSpellCheckInited() {
   return SpellCheckRange(nullptr);
 }
 
-// Changes the number of pending spell checks by the given delta.  If the number
-// becomes zero or nonzero, observers are notified.  See NotifyObservers for
+// Changes the number of pending spellchecks by the given delta. If the number
+// becomes zero or nonzero, observers are notified. See NotifyObservers for
 // info on the aEditor parameter.
 void mozInlineSpellChecker::ChangeNumPendingSpellChecks(
     int32_t aDelta, TextEditor* aTextEditor) {
@@ -756,8 +756,8 @@ void mozInlineSpellChecker::ChangeNumPendingSpellChecks(
   }
 }
 
-// Broadcasts the given topic to observers.  aEditor is passed to observers if
-// nonnull; otherwise mTextEditor is passed.
+// Broadcasts the given topic to observers. aEditor is passed to observers if
+// non-null; otherwise mTextEditor is passed.
 void mozInlineSpellChecker::NotifyObservers(const char* aTopic,
                                             TextEditor* aTextEditor) {
   nsCOMPtr<nsIObserverService> os = mozilla::services::GetObserverService();
@@ -784,7 +784,7 @@ nsresult mozInlineSpellChecker::SpellCheckAfterEditorChange(
     nsINode* aStartNode, uint32_t aStartOffset, nsINode* aEndNode,
     uint32_t aEndOffset) {
   nsresult rv;
-  if (!mSpellCheck) return NS_OK;  // disabling spell checking is not an error
+  if (!mSpellCheck) return NS_OK;  // disabling spellchecking is not an error
 
   // this means something has changed, and we never check the current word,
   // therefore, we should spellcheck for subsequent caret navigations
@@ -858,7 +858,7 @@ mozInlineSpellChecker::ReplaceWord(nsINode* aNode, int32_t aOffset,
 
   // In usual cases, any words shouldn't include line breaks, but technically,
   // they may include and we need to avoid `HTMLTextAreaElement.value` returns
-  // \r.  Therefore, we need to handle it here.
+  // \r. Therefore, we need to handle it here.
   nsString newWord(aNewWord);
   if (!mTextEditor->AsHTMLEditor()) {
     nsContentUtils::PlatformToDOMLineBreaks(newWord);
@@ -990,9 +990,9 @@ nsresult mozInlineSpellChecker::MakeSpellCheckRange(nsINode* aStartNode,
 
   if (aEndOffset == -1) {
     // It's hard to say whether it's better to just do nsINode::GetChildCount or
-    // get the ChildNodes() and then its length.  The latter is faster if we
+    // get the ChildNodes() and then its length. The latter is faster if we
     // keep going through this code for the same nodes (because it caches the
-    // length).  The former is faster if we keep getting different nodes here...
+    // length). The former is faster if we keep getting different nodes here...
     //
     // Let's do the thing which can't end up with bad O(N^2) behavior.
     aEndOffset = aEndNode->ChildNodes()->Length();
@@ -1038,7 +1038,7 @@ nsresult mozInlineSpellChecker::SpellCheckBetweenNodes(nsINode* aStartNode,
 
 // mozInlineSpellChecker::ShouldSpellCheckNode
 //
-//    There are certain conditions when we don't want to spell check a node. In
+//    There are certain conditions when we don't want to spellcheck a node. In
 //    particular quotations, moz signatures, etc. This routine returns false
 //    for these cases.
 
@@ -1079,7 +1079,7 @@ bool mozInlineSpellChecker::ShouldSpellCheckNode(TextEditor* aTextEditor,
       return false;
     }
 
-    // Make sure that we can always turn on spell checking for inputs/textareas.
+    // Make sure that we can always turn on spellchecking for inputs/textareas.
     // Note that because of the previous check, at this point we know that the
     // node is editable.
     if (content->IsInAnonymousSubtree()) {
@@ -1131,7 +1131,7 @@ nsresult mozInlineSpellChecker::ScheduleSpellCheck(
   nsresult rv = resume->Post();
   if (NS_SUCCEEDED(rv)) {
     if (isFullSpellCheck) {
-      // We're going to check everything.  Suppress further spell-check attempts
+      // We're going to check everything. Suppress further spellcheck attempts
       // until that happens.
       mFullSpellCheckScheduled = true;
     }
@@ -1159,7 +1159,7 @@ nsresult mozInlineSpellChecker::DoSpellCheckSelection(
   mNumWordsInSpellSelection = 0;
 
   // Since we could be modifying the ranges for the spellCheckSelection while
-  // looping on the spell check selection, keep a separate array of range
+  // looping on the spellcheck selection, keep a separate array of range
   // elements inside the selection
   nsTArray<RefPtr<nsRange>> ranges;
 
@@ -1188,10 +1188,10 @@ nsresult mozInlineSpellChecker::DoSpellCheckSelection(
 
   bool doneChecking;
   for (int32_t idx = 0; idx < count; idx++) {
-    // We can consider this word as "added" since we know it has no spell
-    // check range over it that needs to be deleted. All the old ranges
-    // were cleared above. We also need to clear the word count so that we
-    // check all words instead of stopping early.
+    // We can consider this word as "added" since we know it has no spellcheck
+    // range over it that needs to be deleted. All the old ranges were cleared
+    // above. We also need to clear the word count so that we check all words
+    // instead of stopping early.
     status->mRange = ranges[idx];
     rv = DoSpellCheck(aWordUtil, aSpellCheckSelection, status, &doneChecking);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1207,12 +1207,12 @@ nsresult mozInlineSpellChecker::DoSpellCheckSelection(
 //
 //    This function checks words intersecting the given range, excluding those
 //    inside mStatus->mNoCheckRange (can be nullptr). Words inside aNoCheckRange
-//    will have any spell selection removed (this is used to hide the
+//    will have any spellcheck selection removed (this is used to hide the
 //    underlining for the word that the caret is in). aNoCheckRange should be
 //    on word boundaries.
 //
 //    mResume->mCreatedRange is a possibly nullptr range of new text that was
-//    inserted.  Inside this range, we don't bother to check whether things are
+//    inserted. Inside this range, we don't bother to check whether things are
 //    inside the spellcheck selection, which speeds up large paste operations
 //    considerably.
 //
@@ -1276,14 +1276,14 @@ nsresult mozInlineSpellChecker::DoSpellCheck(
     if (!beginNode->IsInComposedDoc() || !endNode->IsInComposedDoc() ||
         !beginNode->IsShadowIncludingInclusiveDescendantOf(rootNode) ||
         !endNode->IsShadowIncludingInclusiveDescendantOf(rootNode)) {
-      // Just bail out and don't try to spell-check this
+      // Just bail out and don't try to spellcheck this
       return NS_OK;
     }
 
     nsresult rv =
         aWordUtil.SetPositionAndEnd(beginNode, beginOffset, endNode, endOffset);
     if (NS_FAILED(rv)) {
-      // Just bail out and don't try to spell-check this
+      // Just bail out and don't try to spellcheck this
       return NS_OK;
     }
   }
@@ -1482,10 +1482,11 @@ void mozInlineSpellChecker::CheckCurrentWordsNoSuggest(
 
 nsresult mozInlineSpellChecker::ResumeCheck(
     UniquePtr<mozInlineSpellStatus>&& aStatus) {
-  // Observers should be notified that spell check has ended only after spell
-  // check is done below, but since there are many early returns in this method
-  // and the number of pending spell checks must be decremented regardless of
-  // whether the spell check actually happens, use this RAII object.
+  // Observers should be notified that spellcheck has ended only after
+  // spellcheck is done below, but since there are many early returns in this
+  // method and the number of pending spellchecks must be decremented
+  // regardless of whether the spellcheck actually happens, use this RAII
+  // object.
   AutoChangeNumPendingSpellChecks autoChangeNumPending(this, -1);
 
   if (aStatus->IsFullSpellCheck()) {
@@ -1497,7 +1498,7 @@ nsresult mozInlineSpellChecker::ResumeCheck(
     mFullSpellCheckScheduled = false;
   }
 
-  if (!mSpellCheck) return NS_OK;  // spell checking has been turned off
+  if (!mSpellCheck) return NS_OK;  // spellchecking has been turned off
 
   if (!mTextEditor) {
     return NS_OK;
@@ -1596,7 +1597,7 @@ nsresult mozInlineSpellChecker::CleanupRangesInSelection(
 // mozInlineSpellChecker::RemoveRange
 //
 //    For performance reasons, we have an upper bound on the number of word
-//    ranges  in the spell check selection. When removing a range from the
+//    ranges  in the spellcheck selection. When removing a range from the
 //    selection, we need to decrement mNumWordsInSpellSelection
 
 nsresult mozInlineSpellChecker::RemoveRange(Selection* aSpellCheckSelection,
@@ -1616,7 +1617,7 @@ nsresult mozInlineSpellChecker::RemoveRange(Selection* aSpellCheckSelection,
 // mozInlineSpellChecker::AddRange
 //
 //    For performance reasons, we have an upper bound on the number of word
-//    ranges we'll add to the spell check selection. Once we reach that upper
+//    ranges we'll add to the spellcheck selection. Once we reach that upper
 //    bound, stop adding the ranges
 
 nsresult mozInlineSpellChecker::AddRange(Selection* aSpellCheckSelection,
@@ -1671,7 +1672,7 @@ nsresult mozInlineSpellChecker::SaveCurrentSelectionPosition() {
 
 // mozInlineSpellChecker::HandleNavigationEvent
 //
-//    Acts upon mouse clicks and keyboard navigation changes, spell checking
+//    Acts upon mouse clicks and keyboard navigation changes, spellchecking
 //    the previous word if the new navigation location moves us to another
 //    word.
 //
@@ -1802,8 +1803,8 @@ class UpdateCurrentDictionaryCallback final
 NS_IMPL_ISUPPORTS(UpdateCurrentDictionaryCallback, nsIEditorSpellCheckCallback)
 
 NS_IMETHODIMP mozInlineSpellChecker::UpdateCurrentDictionary() {
-  // mSpellCheck is null and mPendingSpellCheck is nonnull while the spell
-  // checker is being initialized.  Calling UpdateCurrentDictionary on
+  // mSpellCheck is null and mPendingSpellCheck is non-null while the spelling
+  // checker is being initialized. Calling UpdateCurrentDictionary on
   // mPendingSpellCheck simply queues the dictionary update after the init.
   RefPtr<EditorSpellCheck> spellCheck =
       mSpellCheck ? mSpellCheck : mPendingSpellCheck;

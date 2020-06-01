@@ -61,16 +61,16 @@ bool mozEnglishWordUtils::FindNextWord(const nsAString& aWord, uint32_t offset,
     p++;
   }
 
-  // we could be trying to break down a url, we don't want to break a url into
-  // parts, instead we want to find out if it really is a url and if so, skip
-  // it, advancing startWord to a point after the url.
+  // we could be trying to break down a URL, we don't want to break a URL into
+  // parts, instead we want to find out if it really is a URL and if so, skip
+  // it, advancing startWord to a point after the URL.
 
-  // before we spend more time looking to see if the word is a url, look for a
-  // url identifer and make sure that identifer isn't the last character in
+  // before we spend more time looking to see if the word is a URL, look for a
+  // URL identifier and make sure that identifier isn't the last character in
   // the word fragment.
   if ((p < endbuf - 1) && (*p == ':' || *p == '@' || *p == '.')) {
-    // ok, we have a possible url...do more research to find out if we really
-    // have one and determine the length of the url so we can skip over it.
+    // OK, we have a possible URL... do more research to find out if we really
+    // have one and determine the length of the URL so we can skip over it.
 
     if (mURLDetector) {
       int32_t startPos = -1;
@@ -79,13 +79,13 @@ bool mozEnglishWordUtils::FindNextWord(const nsAString& aWord, uint32_t offset,
       mURLDetector->FindURLInPlaintext(startWord, endbuf - startWord,
                                        p - startWord, &startPos, &endPos);
 
-      // ok, if we got a url, adjust the array bounds, skip the current url
+      // OK, if we got a URL, adjust the array bounds, skip the current URL
       // text and find the next word again
       if (startPos != -1 && endPos != -1) {
-        startWord = p + endPos + 1;  // skip over the url
+        startWord = p + endPos + 1;  // skip over the URL
 
         // now recursively call FindNextWord to search for the next word now
-        // that we have skipped the url
+        // that we have skipped the URL
         return FindNextWord(aWord, startWord - word, begin, end);
       }
     }

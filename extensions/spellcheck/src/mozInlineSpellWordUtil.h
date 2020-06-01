@@ -12,6 +12,7 @@
 #include "nsString.h"
 #include "nsTArray.h"
 
+// Set to spew messages to the console about what is happening.
 //#define DEBUG_SPELLCHECK
 
 class nsRange;
@@ -59,7 +60,7 @@ class NodeOffsetRange {
 
 /**
  *    This class extracts text from the DOM and builds it into a single string.
- *    The string includes whitespace breaks whereever non-inline elements begin
+ *    The string includes whitespace breaks wherever non-inline elements begin
  *    and end. This string is broken into "real words", following somewhat
  *    complex rules; for example substrings that look like URLs or
  *    email addresses are treated as single words, but otherwise many kinds of
