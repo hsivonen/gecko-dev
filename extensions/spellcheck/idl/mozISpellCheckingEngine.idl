@@ -51,12 +51,12 @@ interface mozISpellCheckingEngine : nsISupports {
   void loadDictionariesFromDir(in nsIFile dir);
 
   /**
-   * Add dictionaries from a directory to the spell checker
+   * Add dictionaries from a directory to the spelling checker
    */
   void addDirectory(in nsIFile dir);
 
   /**
-   * Remove dictionaries from a directory from the spell checker
+   * Remove dictionaries from a directory from the spelling checker
    */
   void removeDirectory(in nsIFile dir);
 

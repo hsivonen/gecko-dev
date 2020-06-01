@@ -20,7 +20,7 @@ class mozEnglishWordUtils final {
   mozEnglishWordUtils();
 
   /**
-   * Given a unicode string and an offset, find the beginning and end of the
+   * Given a Unicode string and an offset, find the beginning and end of the
    * next word. Return false, begin and end are -1 if there are no words
    * remaining in the string. This should really be folded into the
    * Line/WordBreaker.
@@ -34,7 +34,7 @@ class mozEnglishWordUtils final {
   static bool ucIsAlpha(char16_t aChar);
 
   nsCOMPtr<mozITXTToHTMLConv>
-      mURLDetector;  // used to detect urls so the spell checker can skip them.
+      mURLDetector;  // used to detect URLs for the spelling checker to skip.
 };
 
 #endif

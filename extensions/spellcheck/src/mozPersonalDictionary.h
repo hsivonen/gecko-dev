@@ -63,7 +63,7 @@ class mozPersonalDictionary final : public mozIPersonalDictionary,
   /* enter the monitor before starting a synchronous load off the main-thread */
   void SyncLoad();
 
-  /* launch an asynchrounous load of the dictionary from the main-thread
+  /* launch an asynchronous load of the dictionary from the main-thread
    * after successfully initializing mFile with the path of the dictionary */
   nsresult LoadInternal();
 

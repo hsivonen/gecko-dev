@@ -223,7 +223,7 @@ nsresult mozSpellChecker::Replace(const nsAString& aOldWord,
     currOffset = 0;
   }
 
-  // We are done replacing.  Put the selection point back where we found  it
+  // We are done replacing. Put the selection point back where we found  it
   // (or equivalent);
   result = mTextServicesDocument->FirstBlock();
   if (NS_WARN_IF(NS_FAILED(result))) {
@@ -381,7 +381,7 @@ nsresult mozSpellChecker::SetCurrentDictionary(const nsAString& aDictionary) {
 
   for (int32_t i = 0; i < spellCheckingEngines.Count(); i++) {
     // We must set mSpellCheckingEngine before we call SetDictionary, since
-    // SetDictionary calls back to this spell checker to check if the
+    // SetDictionary calls back to this spelling checker to check if the
     // dictionary was set
     mSpellCheckingEngine = spellCheckingEngines[i];
 
@@ -515,8 +515,8 @@ nsresult mozSpellChecker::GetEngineList(
 
   nsCOMPtr<nsISimpleEnumerator> catEntries;
 
-  // Get contract IDs of registrated external spell-check engines and
-  // append one of HunSpell at the end.
+  // Get contract IDs of registered external spelling checker engines and
+  // append one of the engines at the end.
   rv = catMgr->EnumerateCategory("spell-check-engine",
                                  getter_AddRefs(catEntries));
   if (NS_FAILED(rv)) return rv;
@@ -533,8 +533,8 @@ nsresult mozSpellChecker::GetEngineList(
     rv = entry->GetData(contractId);
     if (NS_FAILED(rv)) return rv;
 
-    // Try to load spellchecker engine. Ignore errors silently
-    // except for the last one (HunSpell).
+    // Try to load spelling checker engine. Ignore errors silently
+    // except for the last engine.
     nsCOMPtr<mozISpellCheckingEngine> engine =
         do_GetService(contractId.get(), &rv);
     if (NS_SUCCEEDED(rv)) {
@@ -542,12 +542,12 @@ nsresult mozSpellChecker::GetEngineList(
     }
   }
 
-  // Try to load HunSpell spellchecker engine.
+  // Try to load spellchecker engine.
   nsCOMPtr<mozISpellCheckingEngine> engine =
       do_GetService(DEFAULT_SPELL_CHECKER, &rv);
   if (NS_FAILED(rv)) {
-    // Fail if not succeeded to load HunSpell. Ignore errors
-    // for external spellcheck engines.
+    // Fail if not succeeded to load spelling checker engine. Ignore errors
+    // for external spelling checker engines.
     return rv;
   }
   aSpellCheckingEngines->AppendObject(engine);
