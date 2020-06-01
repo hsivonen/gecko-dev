@@ -47,6 +47,7 @@ mozSpellChecker::~mozSpellChecker() {
 }
 
 nsresult mozSpellChecker::Init() {
+  printf("DEBUG mozSpellChecker::Init() {\n");
   mSpellCheckingEngine = nullptr;
   if (XRE_IsContentProcess()) {
     mozilla::dom::ContentChild* contentChild =
@@ -134,6 +135,7 @@ RefPtr<CheckWordPromise> mozSpellChecker::CheckWords(
 
 nsresult mozSpellChecker::CheckWord(const nsAString& aWord, bool* aIsMisspelled,
                                     nsTArray<nsString>* aSuggestions) {
+  printf("DEBUG mozSpellChecker::CheckWord(const nsAString& aWord=\"%s\"\n", NS_ConvertUTF16toUTF8(aWord).get());
   nsresult result;
   bool correct;
 
