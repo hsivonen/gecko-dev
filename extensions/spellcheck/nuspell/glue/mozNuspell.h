@@ -73,9 +73,8 @@
 #include "nsInterfaceHashtable.h"
 #include "nsWeakReference.h"
 #include "nsCycleCollectionParticipant.h"
-#include "mozNuspellAllocator.h"
 
-#define MOZ_NUSPELL_CONTRACTID "@mozilla.org/spellchecker/engine;1"//TODO
+#define MOZ_NUSPELL_CONTRACTID "@mozilla.org/spellchecker/engine;1"
 #define MOZ_NUSPELL_CID                             \
   /* 56c778e4-1bee-45f3-a689-886692a97fe7 */         \
   {                                                  \

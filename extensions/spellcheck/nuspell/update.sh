@@ -25,4 +25,3 @@ rm ${nuspell_dir}/src/main.cpp
 rm -rf ${tmpclonedir}
 
 cd ${nuspell_dir}/src
-#TODO patch -p5 < ../patches/bug1410214.patch

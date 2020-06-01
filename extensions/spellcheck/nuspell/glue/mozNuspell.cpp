@@ -71,7 +71,7 @@
 #include "nsNetUtil.h"
 #include "mozilla/dom/ContentParent.h"
 #include "mozilla/Components.h"
-#include <fstream>
+#include <sstream>
 
 using mozilla::dom::ContentParent;
 using namespace mozilla;
@@ -98,14 +98,9 @@ NS_IMPL_COMPONENT_FACTORY(mozNuspell) {
   return nullptr;
 }
 
-template <>
-mozilla::CountingAllocatorBase<NuspellAllocator>::AmountType
-    mozilla::CountingAllocatorBase<NuspellAllocator>::sAmount(0);
-
 mozNuspell::mozNuspell() : mNuspell() {
 #ifdef DEBUG
-  // There must be only one instance of this class: it reports memory based on
-  // a single static count in NuspellAllocator.
+  // There must be only one instance of this class.
   static bool hasRun = false;
   MOZ_ASSERT(!hasRun);
   hasRun = true;
@@ -113,6 +108,7 @@ mozNuspell::mozNuspell() : mNuspell() {
 }
 
 nsresult mozNuspell::Init() {
+  printf("DEBUG mozNuspell::Init() {\n");
   LoadDictionaryList(false);
 
   nsCOMPtr<nsIObserverService> obs = mozilla::services::GetObserverService();
@@ -127,10 +123,10 @@ nsresult mozNuspell::Init() {
 }
 
 mozNuspell::~mozNuspell() {
+  printf("DEBUG mozHunspell::~mozHunspell() {\n");
   mozilla::UnregisterWeakMemoryReporter(this);
 
   mPersonalDictionary = nullptr;
-  //TODO REMOVE delete mNuspell;
 }
 
 NS_IMETHODIMP
@@ -145,9 +141,8 @@ mozNuspell::GetDictionary(nsAString& aDictionary) {
  */
 NS_IMETHODIMP
 mozNuspell::SetDictionary(const nsAString& aDictionary) {
+  printf("DEBUG mozHunspell::SetDictionary(const nsAString& aDictionary=\"%s\") {\n", NS_ConvertUTF16toUTF8(aDictionary).get());
   if (aDictionary.IsEmpty()) {
-    //TODO REMOVE delete mNuspell;
-    //TODO REMOVE, SEE NEXT mNuspell = nullptr;
     mNuspell = Dictionary();
     mDictionary.Truncate();
     mAffixFileName.Truncate();
@@ -184,14 +179,15 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
   mDictionary = aDictionary;
   mAffixFileName = affFileName;
 
-  auto affStr = std::fstream(affFileName.get());
-  auto dictStr = std::fstream(dictFileName.get());
+  auto affStr = std::istringstream(affFileName.get());
+  auto dictStr = std::istringstream(dictFileName.get());
 
   mNuspell = nuspell::Dictionary::load_from_aff_dic(affStr, dictStr);
-  //TODO if (!mNuspell) return NS_ERROR_OUT_OF_MEMORY;
+  printf("DEBUG   = nuspell::Dictionary::load_from_aff_dic(affStr=\"%s\", dictStr=\"%s\");\n", affFileName.get(), dictFileName.get());
 
   auto encoding =
-      mozilla::Encoding::ForLabelNoReplacement(MakeSpan("UTF-8", 6));//TODO mNuspell.get_dict_encoding());
+      mozilla::Encoding::ForLabelNoReplacement(MakeSpan("UTF-8", 6));//TODO
+  printf("DEBUG   = Encoding::ForLabelNoReplacement(MakeSpan(\"UTF-8\", 6));\n");
   if (!encoding) {
     return NS_ERROR_UCONV_NOCONV;
   }
@@ -391,7 +387,7 @@ NS_IMETHODIMP
 mozNuspell::CollectReports(nsIHandleReportCallback* aHandleReport,
                             nsISupports* aData, bool aAnonymize) {
   MOZ_COLLECT_REPORT("explicit/spell-check", KIND_HEAP, UNITS_BYTES,
-                     NuspellAllocator::MemoryAllocated(),
+                     0,
                      "Memory used by the spell-checking engine.");
 
   return NS_OK;
@@ -399,10 +395,10 @@ mozNuspell::CollectReports(nsIHandleReportCallback* aHandleReport,
 
 NS_IMETHODIMP
 mozNuspell::Check(const nsAString& aWord, bool* aResult) {
+  printf("DEBUG mozNuspell::Check(const nsAString& aWord=\"%s\", bool* aResult) {\n", NS_ConvertUTF16toUTF8(aWord).get());
   if (NS_WARN_IF(!aResult)) {
     return NS_ERROR_INVALID_ARG;
   }
-  //TODO NS_ENSURE_TRUE(mNuspell, NS_ERROR_FAILURE);
 
   std::string charsetWord;
   nsresult rv = ConvertCharset(aWord, charsetWord);
@@ -418,7 +414,7 @@ mozNuspell::Check(const nsAString& aWord, bool* aResult) {
 
 NS_IMETHODIMP
 mozNuspell::Suggest(const nsAString& aWord, nsTArray<nsString>& aSuggestions) {
-//TODO  NS_ENSURE_TRUE(mNuspell, NS_ERROR_FAILURE);
+  printf("DEBUG mozNuspell::Suggest(const nsAString& aWord=\"%s\", nsTArray<nsString>& aSuggestions) {\n", NS_ConvertUTF16toUTF8(aWord).get());
   MOZ_ASSERT(aSuggestions.IsEmpty());
 
   std::string charsetWord;

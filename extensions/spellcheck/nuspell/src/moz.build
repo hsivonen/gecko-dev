@@ -11,8 +11,6 @@ UNIFIED_SOURCES += [
     'utils.cxx',
 ]
 
-DEFINES['NUSPELL_STATIC'] = True
-
 FINAL_LIBRARY = 'xul'
 
 LOCAL_INCLUDES += [
@@ -23,9 +21,6 @@ LOCAL_INCLUDES += [
 AllowCompilerWarnings()
 
 include('/ipc/chromium/chromium-config.mozbuild')
-include('../glue/common.mozbuild')
-
-NuspellIncludes()
 
 if CONFIG['CC_TYPE'] in ('clang', 'clang-cl'):
     CXXFLAGS += [
