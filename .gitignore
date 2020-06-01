@@ -163,3 +163,5 @@ lextab.py
 !.vscode/extensions.json
 !.vscode/tasks.json
 
+# Ignore Doxygen output
+/doxygen
