@@ -18,8 +18,8 @@ https://bugzilla.mozilla.org/show_bug.cgi?id=1272623
 
 </div>
 <pre id="test">
-  <div id="area" contenteditable="true"><b style="font-weight:normal;">testing <span id="misspelled">spellechek</span></b></div>
-  <div id="area2" contenteditable="true">testing <span id="misspelled2" style="font-weight:bold;">spellechek</span></div>
+  <div id="area2" contenteditable="true"><b style="font-weight:normal;">testing <span id="misspelled2">spellhcek</span></b></div>
+  <div id="area3" contenteditable="true">testing <span id="misspelled3" style="font-weight:bold;">psellchek</span></div>
 </pre>
 <script>
 
@@ -60,13 +60,13 @@ https://bugzilla.mozilla.org/show_bug.cgi?id=1272623
     await new Promise(resolve => SimpleTest.waitForFocus(() => SimpleTest.executeSoon(resolve), window));
 
     // Check that <b> tags aren't inserted inside of other <b> tags when it would change the style
-    await performCorrection('misspelled', 'area');
-    is($('area').innerHTML, "<b style=\"font-weight:normal;\">testing <span id=\"misspelled\">spellcheck</span></b>");
+    await performCorrection('misspelled2', 'area');
+    is($('area').innerHTML, "<b style=\"font-weight:normal;\">testing <span id=\"misspelled2\">spellcheck</span></b>");
     is($('area').textContent, 'testing spellcheck', "Spelling corrected properly");
 
     // Check that nodes aren't removed when the entire text inside of them is spelling-corrected
-    await performCorrection('misspelled2', 'area2');
-    is($('area2').innerHTML, "testing <span id=\"misspelled2\" style=\"font-weight:bold;\">spellcheck</span>");
+    await performCorrection('misspelled3', 'area2');
+    is($('area2').innerHTML, "testing <span id=\"misspelled3\" style=\"font-weight:bold;\">spellcheck</span>");
     is($('area2').textContent, 'testing spellcheck', "Spelling corrected properly");
   });
 </script>
