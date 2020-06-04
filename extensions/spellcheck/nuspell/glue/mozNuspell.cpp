@@ -1,4 +1,6 @@
-/******* BEGIN LICENSE BLOCK *******TODO UPDATE
+/******* BEGIN LICENSE BLOCK *******
+ * Copyright 2020 Sander van Geloven for only the Nuspell integration
+ *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
  * The contents of this file are subject to the Mozilla Public License Version
@@ -72,6 +74,11 @@
 #include "mozilla/dom/ContentParent.h"
 #include "mozilla/Components.h"
 #include <sstream>
+#include "nsReadLine.h"
+#include "nsIInputStream.h"
+#include "nsContentUtils.h"
+#include "nsILoadInfo.h"
+#include "nsNetUtil.h"
 
 using mozilla::dom::ContentParent;
 using namespace mozilla;
@@ -108,7 +115,7 @@ mozNuspell::mozNuspell() : mNuspell() {
 }
 
 nsresult mozNuspell::Init() {
-  printf("DEBUG mozNuspell::Init() {\n");
+  printf("DEBUG Entering mozNuspell::Init()\n");
   LoadDictionaryList(false);
 
   nsCOMPtr<nsIObserverService> obs = mozilla::services::GetObserverService();
@@ -123,7 +130,7 @@ nsresult mozNuspell::Init() {
 }
 
 mozNuspell::~mozNuspell() {
-  printf("DEBUG mozHunspell::~mozHunspell() {\n");
+  printf("DEBUG Entering mozNuspell::~mozNuspell()\n");
   mozilla::UnregisterWeakMemoryReporter(this);
 
   mPersonalDictionary = nullptr;
@@ -141,9 +148,9 @@ mozNuspell::GetDictionary(nsAString& aDictionary) {
  */
 NS_IMETHODIMP
 mozNuspell::SetDictionary(const nsAString& aDictionary) {
-  printf("DEBUG mozHunspell::SetDictionary(const nsAString& aDictionary=\"%s\") {\n", NS_ConvertUTF16toUTF8(aDictionary).get());
+  printf("DEBUG Entering mozNuspell::SetDictionary(aDictionary:=\"%s\")\n", NS_ConvertUTF16toUTF8(aDictionary).get());
   if (aDictionary.IsEmpty()) {
-    mNuspell = Dictionary();
+    mNuspell = nuspell::Dictionary();
     mDictionary.Truncate();
     mAffixFileName.Truncate();
     mDecoder = nullptr;
@@ -179,18 +186,81 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
   mDictionary = aDictionary;
   mAffixFileName = affFileName;
 
-  auto affStr = std::istringstream(affFileName.get());
-  auto dictStr = std::istringstream(dictFileName.get());
+  //WIP BEGIN
+  nsLineBuffer<char> mLineBuffer;
+  nsCString aLine; //TODO Which is best? nsACString/nsCString/nsAString
 
+  auto affStr = std::stringstream();
+  nsCOMPtr<nsIURI> affUri;
+  rv = NS_NewURI(getter_AddRefs(affUri), affFileName.get());
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIChannel> affChannel;
+  rv = NS_NewChannel(getter_AddRefs(affChannel), affUri,
+                        nsContentUtils::GetSystemPrincipal(),
+                        nsILoadInfo::SEC_REQUIRE_SAME_ORIGIN_DATA_INHERITS,
+                        nsIContentPolicy::TYPE_OTHER);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIInputStream> mAffStream;
+  rv = affChannel->Open(getter_AddRefs(mAffStream));
+  NS_ENSURE_SUCCESS(rv, rv);
+  int affLines = 0;
+  while (mAffStream) {
+    bool ok;
+    rv = NS_ReadLine(mAffStream.get(), &mLineBuffer, aLine, &ok);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!ok) {
+      mAffStream = nullptr;
+      break;
+    }
+    affStr << aLine.get() << "\r\n";
+    ++affLines;
+  }
+  printf("DEBUG mozNuspell::SetDictionary Read %d lines affix file\n", affLines);
+//  printf("DEBUG mozNuspell::SetDictionary Contents affix file:\n%s", affStr.str().c_str());
+
+  auto dictStr = std::stringstream();
+  nsCOMPtr<nsIURI> dictUri;
+  rv = NS_NewURI(getter_AddRefs(dictUri), dictFileName.get());
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIChannel> dictChannel;
+  rv = NS_NewChannel(getter_AddRefs(dictChannel), dictUri,
+                        nsContentUtils::GetSystemPrincipal(),
+                        nsILoadInfo::SEC_REQUIRE_SAME_ORIGIN_DATA_INHERITS,
+                        nsIContentPolicy::TYPE_OTHER);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIInputStream> mdictStream;
+  rv = dictChannel->Open(getter_AddRefs(mdictStream));
+  NS_ENSURE_SUCCESS(rv, rv);
+  int dictLines = 0;
+  while (mdictStream) {
+    bool ok;
+    rv = NS_ReadLine(mdictStream.get(), &mLineBuffer, aLine, &ok);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!ok) {
+      mdictStream = nullptr;
+      break;
+    }
+    dictStr << aLine.get() << "\r\n";
+    ++dictLines;
+  }
+  printf("DEBUG mozNuspell::SetDictionary Read %d lines dictionary filn", dictLines);
+//  printf("DEBUG mozNuspell::SetDictionary Contents dictionary file:\n%s", dictStr.str().c_str());
+
+
+  printf("DEBUG Calling nuspell::Dictionary::load_from_aff_dic(affStr:=\"%s\", dictStr:=\"%s\");\n", affFileName.get(), dictFileName.get());
   mNuspell = nuspell::Dictionary::load_from_aff_dic(affStr, dictStr);
-  printf("DEBUG   = nuspell::Dictionary::load_from_aff_dic(affStr=\"%s\", dictStr=\"%s\");\n", affFileName.get(), dictFileName.get());
 
+  //TODO Is this sufficient for non-POSIX platforms?
+  printf("DEBUG mozNuspell::SetDictionary Calling Encoding::ForLabelNoReplacement(MakeSpan(\"UTF-8\", 6));\n");
   auto encoding =
-      mozilla::Encoding::ForLabelNoReplacement(MakeSpan("UTF-8", 6));//TODO
-  printf("DEBUG   = Encoding::ForLabelNoReplacement(MakeSpan(\"UTF-8\", 6));\n");
+      mozilla::Encoding::ForLabelNoReplacement(MakeSpan("ISO8859-1", 9));
+//      mozilla::Encoding::ForLabelNoReplacement(MakeSpan("UTF-8", 6)); //TODO This doesn't work.
+  //WIP END
   if (!encoding) {
     return NS_ERROR_UCONV_NOCONV;
   }
+  printf("DEBUG mozNuspell::SetDictionary Creating encoding is OK.\n");
+
   mEncoder = encoding->NewEncoder();
   mDecoder = encoding->NewDecoderWithoutBOMHandling();
 
@@ -395,7 +465,7 @@ mozNuspell::CollectReports(nsIHandleReportCallback* aHandleReport,
 
 NS_IMETHODIMP
 mozNuspell::Check(const nsAString& aWord, bool* aResult) {
-  printf("DEBUG mozNuspell::Check(const nsAString& aWord=\"%s\", bool* aResult) {\n", NS_ConvertUTF16toUTF8(aWord).get());
+  printf("DEBUG Entering mozNuspell::Check(aWord:=\"%s\",\n", NS_ConvertUTF16toUTF8(aWord).get());
   if (NS_WARN_IF(!aResult)) {
     return NS_ERROR_INVALID_ARG;
   }
@@ -409,12 +479,13 @@ mozNuspell::Check(const nsAString& aWord, bool* aResult) {
   if (!*aResult && mPersonalDictionary)
     rv = mPersonalDictionary->Check(aWord, aResult);
 
+  printf("DEBUG Leaving mozNuspell::Check(aWord=\"%s\", aResult:=%d)\n", NS_ConvertUTF16toUTF8(aWord).get(), aResult?1:0);
   return rv;
 }
 
 NS_IMETHODIMP
 mozNuspell::Suggest(const nsAString& aWord, nsTArray<nsString>& aSuggestions) {
-  printf("DEBUG mozNuspell::Suggest(const nsAString& aWord=\"%s\", nsTArray<nsString>& aSuggestions) {\n", NS_ConvertUTF16toUTF8(aWord).get());
+  printf("DEBUG Entering mozNuspell::Suggest(const nsAString& aWord:=\"%s\",\n", NS_ConvertUTF16toUTF8(aWord).get());
   MOZ_ASSERT(aSuggestions.IsEmpty());
 
   std::string charsetWord;
