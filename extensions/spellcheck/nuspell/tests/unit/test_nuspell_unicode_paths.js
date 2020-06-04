@@ -38,6 +38,6 @@ add_task(async function() {
 
   ok(
     spellCheck.check(WORD),
-    "Dictionary should have been loaded from a unicode path"
+    "Dictionary should have been loaded from a Unicode path"
   );
 });
