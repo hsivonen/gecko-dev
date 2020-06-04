@@ -58,9 +58,6 @@ class mozNuspell final : public mozISpellCheckingEngine,
 
   void LoadDictionaryList(bool aNotifyChildProcesses);
 
-  // helper method for converting a word to the charset of the dictionary
-  nsresult ConvertCharset(const nsAString& aStr, std::string& aDst);
-
   NS_DECL_NSIMEMORYREPORTER
 
  protected:
@@ -69,8 +66,7 @@ class mozNuspell final : public mozISpellCheckingEngine,
   void DictionariesChanged(bool aNotifyChildProcesses);
 
   nsCOMPtr<mozIPersonalDictionary> mPersonalDictionary;
-  mozilla::UniquePtr<mozilla::Encoder> mEncoder;
-  mozilla::UniquePtr<mozilla::Decoder> mDecoder;
+  mozilla::UniquePtr<mozilla::Decoder> mDecoder; // this is useless with Nuspell
 
   // Hashtable matches dictionary name to .aff file
   nsInterfaceHashtable<nsStringHashKey, nsIURI> mDictionaries;

@@ -111,7 +111,6 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
     mDictionary.Truncate();
     mAffixFileName.Truncate();
     mDecoder = nullptr;
-    mEncoder = nullptr;
 
     return NS_OK;
   }
@@ -169,7 +168,7 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
       mAffStream = nullptr;
       break;
     }
-    affStr << aLine.get() << "\r\n";
+    affStr << aLine.get() << '\n';
     ++affLines;
   }
   printf("DEBUG mozNuspell::SetDictionary Read %d lines affix file\n", affLines);
@@ -197,19 +196,20 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
       mdictStream = nullptr;
       break;
     }
-    dictStr << aLine.get() << "\r\n";
+    dictStr << aLine.get() << '\n';
     ++dictLines;
   }
   printf("DEBUG mozNuspell::SetDictionary Read %d lines dictionary filn", dictLines);
 //  printf("DEBUG mozNuspell::SetDictionary Contents dictionary file:\n%s", dictStr.str().c_str());
 
-
+  affStr.seekg(0);
+  dictStr.seekg(0);
   printf("DEBUG Calling nuspell::Dictionary::load_from_aff_dic(affStr:=\"%s\", dictStr:=\"%s\");\n", affFileName.get(), dictFileName.get());
   mNuspell = nuspell::Dictionary::load_from_aff_dic(affStr, dictStr);
 
   //TODO Is this sufficient for non-POSIX platforms?
   printf("DEBUG mozNuspell::SetDictionary Calling Encoding::ForLabelNoReplacement(MakeSpan(\"UTF-8\", 6));\n");
-  auto encoding =
+  auto encoding = // this is useless with Nuspell
       mozilla::Encoding::ForLabelNoReplacement(MakeSpan("ISO8859-1", 9));
 //      mozilla::Encoding::ForLabelNoReplacement(MakeSpan("UTF-8", 6)); //TODO This doesn't work.
   //WIP END
@@ -218,8 +218,7 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
   }
   printf("DEBUG mozNuspell::SetDictionary Creating encoding is OK.\n");
 
-  mEncoder = encoding->NewEncoder();
-  mDecoder = encoding->NewDecoderWithoutBOMHandling();
+  mDecoder = encoding->NewDecoderWithoutBOMHandling(); // this is useless with Nuspell
 
   return NS_OK;
 }
@@ -378,38 +377,6 @@ mozNuspell::LoadDictionariesFromDir(nsIFile* aDir) {
   return NS_OK;
 }
 
-nsresult mozNuspell::ConvertCharset(const nsAString& aStr, std::string& aDst) {
-  if (NS_WARN_IF(!mEncoder)) {
-    return NS_ERROR_NOT_INITIALIZED;
-  }
-
-  auto src = MakeSpan(aStr.BeginReading(), aStr.Length());
-  CheckedInt<size_t> needed =
-      mEncoder->MaxBufferLengthFromUTF16WithoutReplacement(src.Length());
-  if (!needed.isValid()) {
-    return NS_ERROR_OUT_OF_MEMORY;
-  }
-
-  aDst.resize(needed.value());
-
-  char* dstPtr = &aDst[0];
-  auto dst = MakeSpan(reinterpret_cast<uint8_t*>(dstPtr), needed.value());
-
-  uint32_t result;
-  size_t read;
-  size_t written;
-  Tie(result, read, written) =
-      mEncoder->EncodeFromUTF16WithoutReplacement(src, dst, true);
-  Unused << read;
-  MOZ_ASSERT(result != kOutputFull);
-  if (result != kInputEmpty) {
-    return NS_ERROR_UENC_NOMAPPING;
-  }
-  aDst.resize(written);
-  mEncoder->Encoding()->NewEncoderInto(*mEncoder);
-  return NS_OK;
-}
-
 NS_IMETHODIMP
 mozNuspell::CollectReports(nsIHandleReportCallback* aHandleReport,
                             nsISupports* aData, bool aAnonymize) {
@@ -427,9 +394,8 @@ mozNuspell::Check(const nsAString& aWord, bool* aResult) {
     return NS_ERROR_INVALID_ARG;
   }
 
-  std::string charsetWord;
-  nsresult rv = ConvertCharset(aWord, charsetWord);
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ConvertUTF16toUTF8 u8word(aWord);
+  std::string charsetWord(u8word.Data(), u8word.Length());
 
   *aResult = mNuspell.spell(charsetWord);
 
@@ -445,9 +411,8 @@ mozNuspell::Suggest(const nsAString& aWord, nsTArray<nsString>& aSuggestions) {
   printf("DEBUG Entering mozNuspell::Suggest(const nsAString& aWord:=\"%s\",\n", NS_ConvertUTF16toUTF8(aWord).get());
   MOZ_ASSERT(aSuggestions.IsEmpty());
 
-  std::string charsetWord;
-  nsresult rv = ConvertCharset(aWord, charsetWord);
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ConvertUTF16toUTF8 u8word(aWord);
+  std::string charsetWord(u8word.Data(), u8word.Length());
 
   std::vector<std::string> suggestions = std::vector<std::string>();
   mNuspell.suggest(charsetWord, suggestions);
@@ -456,6 +421,7 @@ mozNuspell::Suggest(const nsAString& aWord, nsTArray<nsString>& aSuggestions) {
     aSuggestions.SetCapacity(suggestions.size());
     for (Span<const char> charSrc : suggestions) {
       // Convert the suggestion to utf16
+      //TODO: use NS_ConvertUTF8toUTF16, not mDecoder
       auto src = AsBytes(charSrc);
       rv = mDecoder->Encoding()->DecodeWithoutBOMHandling(
           src, *aSuggestions.AppendElement());
