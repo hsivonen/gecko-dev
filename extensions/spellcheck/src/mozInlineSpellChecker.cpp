@@ -67,7 +67,7 @@ using namespace mozilla::dom;
 using namespace mozilla::ipc;
 
 // Set to spew messages to the console about what is happening.
-#define DEBUG_INLINESPELL
+//#define DEBUG_INLINESPELL
 
 // the number of milliseconds that we will take at once to do spellchecking
 #define INLINESPELL_CHECK_TIMEOUT 1
@@ -1153,7 +1153,6 @@ nsresult mozInlineSpellChecker::ScheduleSpellCheck(
 
 nsresult mozInlineSpellChecker::DoSpellCheckSelection(
     mozInlineSpellWordUtil& aWordUtil, Selection* aSpellCheckSelection) {
-  printf("[[ nsresult mozInlineSpellChecker::DoSpellCheck(\n");
   nsresult rv;
 
   // clear out mNumWordsInSpellSelection since we'll be rebuilding the ranges.
@@ -1238,6 +1237,7 @@ nsresult mozInlineSpellChecker::DoSpellCheckSelection(
 nsresult mozInlineSpellChecker::DoSpellCheck(
     mozInlineSpellWordUtil& aWordUtil, Selection* aSpellCheckSelection,
     const UniquePtr<mozInlineSpellStatus>& aStatus, bool* aDoneChecking) {
+  printf("DEBUG Entering mozInlineSpellChecker::DoSpellCheck(\n");
   *aDoneChecking = true;
 
   if (NS_WARN_IF(!mSpellCheck)) {
@@ -1420,7 +1420,7 @@ class MOZ_RAII AutoChangeNumPendingSpellChecks final {
 void mozInlineSpellChecker::CheckCurrentWordsNoSuggest(
     Selection* aSpellCheckSelection, const nsTArray<nsString>& aWords,
     const nsTArray<NodeOffsetRange>& aRanges) {
-  printf("[[ void mozInlineSpellChecker::CheckCurrentWordsNoSuggest(\n");
+  printf("DEBUG Entering mozInlineSpellChecker::CheckCurrentWordsNoSuggest(\n");
   if (aWords.IsEmpty()) {
     return;
   }

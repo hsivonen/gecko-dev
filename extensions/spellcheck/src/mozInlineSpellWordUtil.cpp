@@ -1016,7 +1016,6 @@ NodeOffset mozInlineSpellWordUtil::MapSoftTextOffsetToDOMPosition(
 int32_t mozInlineSpellWordUtil::FindRealWordContaining(int32_t aSoftTextOffset,
                                                        DOMMapHint aHint,
                                                        bool aSearchForward) {
-  printf("DEBUG mozInlineSpellWordUtil::FindRealWordContaining(\n");
   NS_ASSERTION(mSoftTextValid,
                "Soft text must be valid if we're to map out of it");
   if (!mSoftTextValid) return -1;

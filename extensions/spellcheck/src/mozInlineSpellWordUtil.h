@@ -13,7 +13,7 @@
 #include "nsTArray.h"
 
 // Set to spew messages to the console about what is happening.
-#define DEBUG_SPELLCHECK
+//#define DEBUG_SPELLCHECK
 
 class nsRange;
 class nsINode;

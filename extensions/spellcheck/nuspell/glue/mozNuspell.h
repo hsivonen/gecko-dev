@@ -83,8 +83,6 @@
     }                                                \
   }
 
-using namespace nuspell;
-
 class mozNuspell final : public mozISpellCheckingEngine,
                          public nsIObserver,
                          public nsSupportsWeakReference,
@@ -124,7 +122,7 @@ class mozNuspell final : public mozISpellCheckingEngine,
   nsCOMArray<nsIFile> mDynamicDirectories;
   nsInterfaceHashtable<nsStringHashKey, nsIURI> mDynamicDictionaries;
 
-  Dictionary mNuspell;
+  nuspell::Dictionary mNuspell;
 
 };
 
