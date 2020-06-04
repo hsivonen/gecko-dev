@@ -479,7 +479,7 @@ mozNuspell::Check(const nsAString& aWord, bool* aResult) {
   if (!*aResult && mPersonalDictionary)
     rv = mPersonalDictionary->Check(aWord, aResult);
 
-  printf("DEBUG Leaving mozNuspell::Check(aWord=\"%s\", aResult:=%d)\n", NS_ConvertUTF16toUTF8(aWord).get(), aResult?1:0);
+  printf("DEBUG Leaving mozNuspell::Check(aWord=\"%s\", aResult:=%d)\n", NS_ConvertUTF16toUTF8(aWord).get(), *aResult?1:0);
   return rv;
 }
 
