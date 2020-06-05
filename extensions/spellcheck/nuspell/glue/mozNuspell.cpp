@@ -110,7 +110,6 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
     mNuspell = nuspell::Dictionary();
     mDictionary.Truncate();
     mAffixFileName.Truncate();
-    mDecoder = nullptr;
 
     return NS_OK;
   }
@@ -142,7 +141,6 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
   mDictionary = aDictionary;
   mAffixFileName = affFileName;
 
-  //WIP BEGIN
   nsLineBuffer<char> mLineBuffer;
   nsCString aLine; //TODO Which is best? nsACString/nsCString/nsAString
 
@@ -206,19 +204,6 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
   dictStr.seekg(0);
   printf("DEBUG Calling nuspell::Dictionary::load_from_aff_dic(affStr:=\"%s\", dictStr:=\"%s\");\n", affFileName.get(), dictFileName.get());
   mNuspell = nuspell::Dictionary::load_from_aff_dic(affStr, dictStr);
-
-  //TODO Is this sufficient for non-POSIX platforms?
-  printf("DEBUG mozNuspell::SetDictionary Calling Encoding::ForLabelNoReplacement(MakeSpan(\"UTF-8\", 6));\n");
-  auto encoding = // this is useless with Nuspell
-      mozilla::Encoding::ForLabelNoReplacement(MakeSpan("ISO8859-1", 9));
-//      mozilla::Encoding::ForLabelNoReplacement(MakeSpan("UTF-8", 6)); //TODO This doesn't work.
-  //WIP END
-  if (!encoding) {
-    return NS_ERROR_UCONV_NOCONV;
-  }
-  printf("DEBUG mozNuspell::SetDictionary Creating encoding is OK.\n");
-
-  mDecoder = encoding->NewDecoderWithoutBOMHandling(); // this is useless with Nuspell
 
   return NS_OK;
 }
@@ -399,6 +384,7 @@ mozNuspell::Check(const nsAString& aWord, bool* aResult) {
 
   *aResult = mNuspell.spell(charsetWord);
 
+  nsresult rv = NS_OK;
   if (!*aResult && mPersonalDictionary)
     rv = mPersonalDictionary->Check(aWord, aResult);
 
@@ -419,14 +405,9 @@ mozNuspell::Suggest(const nsAString& aWord, nsTArray<nsString>& aSuggestions) {
 
   if (!suggestions.empty()) {
     aSuggestions.SetCapacity(suggestions.size());
-    for (Span<const char> charSrc : suggestions) {
-      // Convert the suggestion to utf16
-      //TODO: use NS_ConvertUTF8toUTF16, not mDecoder
-      auto src = AsBytes(charSrc);
-      rv = mDecoder->Encoding()->DecodeWithoutBOMHandling(
-          src, *aSuggestions.AppendElement());
-      NS_ENSURE_SUCCESS(rv, rv);
-      mDecoder->Encoding()->NewDecoderWithoutBOMHandlingInto(*mDecoder);
+    for (auto& src : suggestions) {
+      printf("DEBUG   suggestion \"%s\"\n", src.c_str());
+      aSuggestions.AppendElement(NS_ConvertUTF8toUTF16(src.c_str()));//FIXME
     }
   }
 

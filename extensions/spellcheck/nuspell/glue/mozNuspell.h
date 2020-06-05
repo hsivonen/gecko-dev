@@ -66,7 +66,6 @@ class mozNuspell final : public mozISpellCheckingEngine,
   void DictionariesChanged(bool aNotifyChildProcesses);
 
   nsCOMPtr<mozIPersonalDictionary> mPersonalDictionary;
-  mozilla::UniquePtr<mozilla::Decoder> mDecoder; // this is useless with Nuspell
 
   // Hashtable matches dictionary name to .aff file
   nsInterfaceHashtable<nsStringHashKey, nsIURI> mDictionaries;
