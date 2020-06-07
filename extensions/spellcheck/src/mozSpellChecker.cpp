@@ -32,7 +32,7 @@ NS_IMPL_CYCLE_COLLECTION_UNROOT_NATIVE(mozSpellChecker, Release)
 mozSpellChecker::mozSpellChecker() : mEngine(nullptr) {}
 
 mozSpellChecker::~mozSpellChecker() {
-  printf("DEBUG Entering mozSpellChecker::~mozSpellChecker()\n");
+  printf("DEBUG1 Entering mozSpellChecker::~mozSpellChecker()\n");
   if (mPersonalDictionary) {
     //    mPersonalDictionary->Save();
     mPersonalDictionary->EndSession();
@@ -48,7 +48,7 @@ mozSpellChecker::~mozSpellChecker() {
 }
 
 nsresult mozSpellChecker::Init() {
-  printf("DEBUG Entering mozSpellChecker::Init()\n");
+  printf("DEBUG1 Entering mozSpellChecker::Init()\n");
   mSpellCheckingEngine = nullptr;
   if (XRE_IsContentProcess()) {
     mozilla::dom::ContentChild* contentChild =
@@ -136,7 +136,7 @@ RefPtr<CheckWordPromise> mozSpellChecker::CheckWords(
 
 nsresult mozSpellChecker::CheckWord(const nsAString& aWord, bool* aIsMisspelled,
                                     nsTArray<nsString>* aSuggestions) {
-  printf("DEBUG Entering mozSpellChecker::CheckWord(aWord:=\"%s\",\n", NS_ConvertUTF16toUTF8(aWord).get());
+  printf("DEBUG1 Entering mozSpellChecker::CheckWord(aWord=\"%s\",\n", NS_ConvertUTF16toUTF8(aWord).get());
   nsresult result;
   bool correct;
 

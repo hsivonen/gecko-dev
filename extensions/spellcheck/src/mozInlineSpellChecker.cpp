@@ -1420,7 +1420,7 @@ class MOZ_RAII AutoChangeNumPendingSpellChecks final {
 void mozInlineSpellChecker::CheckCurrentWordsNoSuggest(
     Selection* aSpellCheckSelection, const nsTArray<nsString>& aWords,
     const nsTArray<NodeOffsetRange>& aRanges) {
-  printf("DEBUG Entering mozInlineSpellChecker::CheckCurrentWordsNoSuggest(\n");
+  printf("DEBUG0 Entering mozInlineSpellChecker::CheckCurrentWordsNoSuggest(\n");
   if (aWords.IsEmpty()) {
     return;
   }

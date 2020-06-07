@@ -975,7 +975,7 @@ auto Aff_Data::parse_aff(istream& in) -> bool
 	this->suffixes = std::move(suffixes);
 
 	cerr.flush();
-cerr << "DEBUG Parsed " << line_num << " aff lines" << endl;
+cerr << "DEBUG3 Aff_Data::parse_aff Parsed " << line_num << " lines" << endl;
 	return in.eof() && !error_happened; // true for success
 }
 
@@ -1110,7 +1110,7 @@ auto Aff_Data::parse_dic(istream& in) -> bool
 			break;
 		}
 	}
-cerr << "DEBUG Parsed " << line_number << " aff lines" << endl;
+cerr << "DEBUG3 Aff_Data::parse_dic Parsed " << line_number << " lines" << endl;
 	return in.eof(); // success if we reached eof
 }
 } // namespace nuspell
