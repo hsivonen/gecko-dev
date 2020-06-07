@@ -33,9 +33,11 @@
                          (defined(__APPLE__) && defined(__MACH__)))
 #include <unistd.h>
 #endif
-//TODO #include "encoding_rs.h"
 
 #include <unicode/locid.h>
+
+#include "Encoding.h"
+#include "encoding_rs.h"
 
 struct UConverter; // unicode/ucnv.h
 
@@ -106,6 +108,9 @@ auto has_uppercase_at_compound_word_boundary(const std::wstring& word, size_t i)
 
 class Encoding_Converter {
 	UConverter* cnv = nullptr;
+
+	mozilla::Encoding* cenc = nullptr;
+	mozilla::Decoder* cdec = nullptr;
 	int counter;//TODO Only for debug, remove later.
 
       public:
@@ -121,17 +126,26 @@ class Encoding_Converter {
 	{
 		cnv = other.cnv;
 		cnv = nullptr;
+
+		cenc = other.cenc;
+		cenc = nullptr;
+		cdec = other.cdec;
+		cdec = nullptr;
 	}
 	auto operator=(const Encoding_Converter& other) -> Encoding_Converter&;
 	auto operator=(Encoding_Converter&& other) noexcept
 	    -> Encoding_Converter&
 	{
 		std::swap(cnv, other.cnv);
+
+		std::swap(cenc, other.cenc);
+		std::swap(cdec, other.cdec);
+
 		return *this;
 	}
 	auto to_wide(const std::string& in, std::wstring& out) -> bool;
 	auto to_wide(const std::string& in) -> std::wstring;
-	auto valid() -> bool { return cnv != nullptr; }
+	auto valid() -> bool { return cnv != nullptr || (cenc != nullptr && cdec != nullptr);}
 };
 
 //#if _POSIX_VERSION >= 200809L
