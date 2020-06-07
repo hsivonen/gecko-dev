@@ -36,6 +36,7 @@
 #include "nsContentUtils.h"
 #include "nsILoadInfo.h"
 #include "nsNetUtil.h"
+#include <iostream> //TODO Only for debugging, remove later.
 
 using mozilla::dom::ContentParent;
 using namespace mozilla;
@@ -72,7 +73,7 @@ mozNuspell::mozNuspell() : mNuspell() {
 }
 
 nsresult mozNuspell::Init() {
-  printf("DEBUG Entering mozNuspell::Init()\n");
+  printf("DEBUG2 Entering mozNuspell::Init()\n");
   LoadDictionaryList(false);
 
   nsCOMPtr<nsIObserverService> obs = mozilla::services::GetObserverService();
@@ -87,7 +88,7 @@ nsresult mozNuspell::Init() {
 }
 
 mozNuspell::~mozNuspell() {
-  printf("DEBUG Entering mozNuspell::~mozNuspell()\n");
+  printf("DEBUG2 Entering mozNuspell::~mozNuspell()\n");
   mozilla::UnregisterWeakMemoryReporter(this);
 
   mPersonalDictionary = nullptr;
@@ -95,6 +96,7 @@ mozNuspell::~mozNuspell() {
 
 NS_IMETHODIMP
 mozNuspell::GetDictionary(nsAString& aDictionary) {
+  printf("DEBUG2 Entering mozNuspell::GetDictionary(aDictionary=\"%s\")\n", NS_ConvertUTF16toUTF8(aDictionary).get());
   aDictionary = mDictionary;
   return NS_OK;
 }
@@ -105,7 +107,7 @@ mozNuspell::GetDictionary(nsAString& aDictionary) {
  */
 NS_IMETHODIMP
 mozNuspell::SetDictionary(const nsAString& aDictionary) {
-  printf("DEBUG Entering mozNuspell::SetDictionary(aDictionary:=\"%s\")\n", NS_ConvertUTF16toUTF8(aDictionary).get());
+  printf("DEBUG2 Entering mozNuspell::SetDictionary(aDictionary=\"%s\")\n", NS_ConvertUTF16toUTF8(aDictionary).get());
   if (aDictionary.IsEmpty()) {
     mNuspell = nuspell::Dictionary();
     mDictionary.Truncate();
@@ -115,7 +117,7 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
   }
 
   nsIURI* affFile = mDictionaries.GetWeak(aDictionary);
-  if (!affFile) {
+  if (!affFile) { //TODO All xpcshell unit tests fails here.
     return NS_ERROR_FILE_NOT_FOUND;
   }
 
@@ -123,6 +125,7 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
 
   nsresult rv = affFile->GetSpec(affFileName);
   NS_ENSURE_SUCCESS(rv, rv);
+  printf("DEBUG2 mozNuspell::SetDictionary Created nsIURI affFile=\"%s\"\n", affFile->GetSpecOrDefault().get());
 
   if (mAffixFileName.Equals(affFileName)) {
     return NS_OK;
@@ -142,12 +145,12 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
   mAffixFileName = affFileName;
 
   nsLineBuffer<char> mLineBuffer;
-  nsCString aLine; //TODO Which is best? nsACString/nsCString/nsAString
 
   auto affStr = std::stringstream();
   nsCOMPtr<nsIURI> affUri;
   rv = NS_NewURI(getter_AddRefs(affUri), affFileName.get());
   NS_ENSURE_SUCCESS(rv, rv);
+  printf("DEBUG2 mozNuspell::SetDictionary Created affUri=\"%s\"\n", affUri->GetSpecOrDefault().get());
   nsCOMPtr<nsIChannel> affChannel;
   rv = NS_NewChannel(getter_AddRefs(affChannel), affUri,
                         nsContentUtils::GetSystemPrincipal(),
@@ -157,25 +160,27 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
   nsCOMPtr<nsIInputStream> mAffStream;
   rv = affChannel->Open(getter_AddRefs(mAffStream));
   NS_ENSURE_SUCCESS(rv, rv);
-  int affLines = 0;
+  int affNumLines = 0;
+  nsCString affLine; //TODO Which is best? nsACString/nsCString/nsAString
   while (mAffStream) {
     bool ok;
-    rv = NS_ReadLine(mAffStream.get(), &mLineBuffer, aLine, &ok);
+    rv = NS_ReadLine(mAffStream.get(), &mLineBuffer, affLine, &ok);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!ok) {
       mAffStream = nullptr;
       break;
     }
-    affStr << aLine.get() << '\n';
-    ++affLines;
+    affStr << affLine.get() << '\n';
+    ++affNumLines;
   }
-  printf("DEBUG mozNuspell::SetDictionary Read %d lines affix file\n", affLines);
-//  printf("DEBUG mozNuspell::SetDictionary Contents affix file:\n%s", affStr.str().c_str());
+  printf("DEBUG2 mozNuspell::SetDictionary Read %d lines affix file\n", affNumLines);
+//  printf("DEBUG2 mozNuspell::SetDictionary Contents affix file:\n%s", affStr.str().c_str());
 
   auto dictStr = std::stringstream();
   nsCOMPtr<nsIURI> dictUri;
   rv = NS_NewURI(getter_AddRefs(dictUri), dictFileName.get());
   NS_ENSURE_SUCCESS(rv, rv);
+  printf("DEBUG2 mozNuspell::SetDictionary Created dictUri=\"%s\"\n", dictUri->GetSpecOrDefault().get());
   nsCOMPtr<nsIChannel> dictChannel;
   rv = NS_NewChannel(getter_AddRefs(dictChannel), dictUri,
                         nsContentUtils::GetSystemPrincipal(),
@@ -185,24 +190,25 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
   nsCOMPtr<nsIInputStream> mdictStream;
   rv = dictChannel->Open(getter_AddRefs(mdictStream));
   NS_ENSURE_SUCCESS(rv, rv);
-  int dictLines = 0;
+  int dictNumLines = 0;
+  nsCString dictLine; //TODO Which is best? nsACString/nsCString/nsAString
   while (mdictStream) {
     bool ok;
-    rv = NS_ReadLine(mdictStream.get(), &mLineBuffer, aLine, &ok);
+    rv = NS_ReadLine(mdictStream.get(), &mLineBuffer, dictLine, &ok);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!ok) {
       mdictStream = nullptr;
       break;
     }
-    dictStr << aLine.get() << '\n';
-    ++dictLines;
+    dictStr << dictLine.get() << '\n';
+    ++dictNumLines;
   }
-  printf("DEBUG mozNuspell::SetDictionary Read %d lines dictionary filn", dictLines);
-//  printf("DEBUG mozNuspell::SetDictionary Contents dictionary file:\n%s", dictStr.str().c_str());
+  printf("DEBUG2 mozNuspell::SetDictionary Read %d lines dictionary file\n", dictNumLines);
+//  printf("DEBUG2 mozNuspell::SetDictionary Contents dictionary file:\n%s", dictStr.str().c_str());
 
   affStr.seekg(0);
   dictStr.seekg(0);
-  printf("DEBUG Calling nuspell::Dictionary::load_from_aff_dic(affStr:=\"%s\", dictStr:=\"%s\");\n", affFileName.get(), dictFileName.get());
+  printf("DEBUG2 Calling nuspell::Dictionary::load_from_aff_dic(affStr=\"%s\", dictStr=\"%s\");\n", affFileName.get(), dictFileName.get());
   mNuspell = nuspell::Dictionary::load_from_aff_dic(affStr, dictStr);
 
   return NS_OK;
@@ -257,6 +263,7 @@ void mozNuspell::LoadDictionaryList(bool aNotifyChildProcesses) {
   // find dictionaries in DICPATH
   char* dicEnv = PR_GetEnv("DICPATH");
   if (dicEnv) {
+    printf("DEBUG2    mozNuspell::LoadDictionaryList DICPATH=%s\n", dicEnv);
     // do a two-pass dance so dictionaries are loaded right-to-left as
     // preference
     nsTArray<nsCOMPtr<nsIFile>> dirs;
@@ -316,6 +323,7 @@ void mozNuspell::DictionariesChanged(bool aNotifyChildProcesses) {
 
 NS_IMETHODIMP
 mozNuspell::LoadDictionariesFromDir(nsIFile* aDir) {
+  std::cout << "DEBUG2 Entering mozNuspell::LoadDictionariesFromDir(aDir=\"" << aDir << "\")\n";
   nsresult rv;
 
   bool check = false;
@@ -333,6 +341,7 @@ mozNuspell::LoadDictionariesFromDir(nsIFile* aDir) {
   while (NS_SUCCEEDED(files->GetNextFile(getter_AddRefs(file))) && file) {
     nsAutoString leafName;
     file->GetLeafName(leafName);
+    std::cout << "DEBUG2 mozNuspell::LoadDictionariesFromDir leafName=\"" << leafName << "\"\n";
     if (!StringEndsWith(leafName, NS_LITERAL_STRING(".dic"))) continue;
 
     nsAutoString dict(leafName);
@@ -344,6 +353,7 @@ mozNuspell::LoadDictionariesFromDir(nsIFile* aDir) {
     file->SetLeafName(leafName);
     rv = file->Exists(&check);
     if (NS_FAILED(rv) || !check) continue;
+    printf("DEBUG2 mozNuspell::LoadDictionariesFromDir Adding dictionary \"%s\"\n", NS_ConvertUTF16toUTF8(dict).get());
 
 #ifdef DEBUG_bsmedberg
     printf("Adding dictionary: %s\n", NS_ConvertUTF16toUTF8(dict).get());
@@ -357,6 +367,7 @@ mozNuspell::LoadDictionariesFromDir(nsIFile* aDir) {
     NS_ENSURE_SUCCESS(rv, rv);
 
     mDictionaries.Put(dict, uri);
+    printf("DEBUG2 mozNuspell::LoadDictionariesFromDir Added dictionary \"%s\"\n", NS_ConvertUTF16toUTF8(dict).get());
   }
 
   return NS_OK;
@@ -374,7 +385,7 @@ mozNuspell::CollectReports(nsIHandleReportCallback* aHandleReport,
 
 NS_IMETHODIMP
 mozNuspell::Check(const nsAString& aWord, bool* aResult) {
-  printf("DEBUG Entering mozNuspell::Check(aWord:=\"%s\",\n", NS_ConvertUTF16toUTF8(aWord).get());
+  printf("DEBUG2 Entering mozNuspell::Check(aWord=\"%s\",\n", NS_ConvertUTF16toUTF8(aWord).get());
   if (NS_WARN_IF(!aResult)) {
     return NS_ERROR_INVALID_ARG;
   }
@@ -388,13 +399,13 @@ mozNuspell::Check(const nsAString& aWord, bool* aResult) {
   if (!*aResult && mPersonalDictionary)
     rv = mPersonalDictionary->Check(aWord, aResult);
 
-  printf("DEBUG Leaving mozNuspell::Check(aWord=\"%s\", aResult:=%d)\n", NS_ConvertUTF16toUTF8(aWord).get(), *aResult?1:0);
+  printf("DEBUG2 Leaving mozNuspell::Check(aWord=\"%s\", aResult=%d)\n", NS_ConvertUTF16toUTF8(aWord).get(), *aResult?1:0);
   return rv;
 }
 
 NS_IMETHODIMP
 mozNuspell::Suggest(const nsAString& aWord, nsTArray<nsString>& aSuggestions) {
-  printf("DEBUG Entering mozNuspell::Suggest(const nsAString& aWord:=\"%s\",\n", NS_ConvertUTF16toUTF8(aWord).get());
+  printf("DEBUG2 Entering mozNuspell::Suggest(const nsAString& aWord=\"%s\",\n", NS_ConvertUTF16toUTF8(aWord).get());
   MOZ_ASSERT(aSuggestions.IsEmpty());
 
   NS_ConvertUTF16toUTF8 u8word(aWord);
@@ -406,8 +417,8 @@ mozNuspell::Suggest(const nsAString& aWord, nsTArray<nsString>& aSuggestions) {
   if (!suggestions.empty()) {
     aSuggestions.SetCapacity(suggestions.size());
     for (auto& src : suggestions) {
-      printf("DEBUG   suggestion \"%s\"\n", src.c_str());
-      aSuggestions.AppendElement(NS_ConvertUTF8toUTF16(src.c_str()));//FIXME
+      printf("DEBUG2    suggestion \"%s\"\n", src.c_str());
+      aSuggestions.AppendElement(NS_ConvertUTF8toUTF16(src.data(), src.size()));
     }
   }
 
