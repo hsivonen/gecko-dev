@@ -109,6 +109,7 @@ NS_IMETHODIMP
 mozNuspell::SetDictionary(const nsAString& aDictionary) {
   printf("DEBUG2 Entering mozNuspell::SetDictionary(aDictionary=\"%s\")\n", NS_ConvertUTF16toUTF8(aDictionary).get());
   if (aDictionary.IsEmpty()) {
+    printf("DEBUG2   aDictionary is empty\n");
     mNuspell = nuspell::Dictionary();
     mDictionary.Truncate();
     mAffixFileName.Truncate();
@@ -117,6 +118,7 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
   }
 
   nsIURI* affFile = mDictionaries.GetWeak(aDictionary);
+    printf("DEBUG2   affFile=\"%s\"\n", affFile->GetSpecOrDefault().get());
   if (!affFile) { //TODO All xpcshell unit tests fails here.
     return NS_ERROR_FILE_NOT_FOUND;
   }
@@ -173,7 +175,7 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
     affStr << affLine.get() << '\n';
     ++affNumLines;
   }
-  printf("DEBUG2 mozNuspell::SetDictionary Read %d lines affix file\n", affNumLines);
+  printf("DEBUG2 mozNuspell::SetDictionary affFileName=\"%s\" read %d lines\n", affFileName.get(),  affNumLines);
 //  printf("DEBUG2 mozNuspell::SetDictionary Contents affix file:\n%s", affStr.str().c_str());
 
   auto dictStr = std::stringstream();
@@ -203,12 +205,12 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
     dictStr << dictLine.get() << '\n';
     ++dictNumLines;
   }
-  printf("DEBUG2 mozNuspell::SetDictionary Read %d lines dictionary file\n", dictNumLines);
+  printf("DEBUG2 mozNuspell::SetDictionary dictFileName=\"%s\" read %d lines\n", dictFileName.get(), dictNumLines);
 //  printf("DEBUG2 mozNuspell::SetDictionary Contents dictionary file:\n%s", dictStr.str().c_str());
 
   affStr.seekg(0);
   dictStr.seekg(0);
-  printf("DEBUG2 Calling nuspell::Dictionary::load_from_aff_dic(affStr=\"%s\", dictStr=\"%s\");\n", affFileName.get(), dictFileName.get());
+  printf("DEBUG2 Calling nuspell::Dictionary::load_from_aff_dic(affStr, dictStr);\n");
   mNuspell = nuspell::Dictionary::load_from_aff_dic(affStr, dictStr);
 
   return NS_OK;
@@ -341,7 +343,6 @@ mozNuspell::LoadDictionariesFromDir(nsIFile* aDir) {
   while (NS_SUCCEEDED(files->GetNextFile(getter_AddRefs(file))) && file) {
     nsAutoString leafName;
     file->GetLeafName(leafName);
-    std::cout << "DEBUG2 mozNuspell::LoadDictionariesFromDir leafName=\"" << leafName << "\"\n";
     if (!StringEndsWith(leafName, NS_LITERAL_STRING(".dic"))) continue;
 
     nsAutoString dict(leafName);

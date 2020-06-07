@@ -834,6 +834,7 @@ auto Aff_Data::parse_aff(istream& in) -> bool
 	// any special number separator otherwise istream >> int might fail
 	// due to thousands separator.
 	// "C" locale can be used assuming it is US-ASCII
+	cerr << "DEBUG3 Aff_Data::parse_aff locale::classic=" << locale::classic().name() << endl;
 	in.imbue(locale::classic());
 	ss.imbue(locale::classic());
 	ss.set_aff_data(*this);
@@ -975,7 +976,7 @@ auto Aff_Data::parse_aff(istream& in) -> bool
 	this->suffixes = std::move(suffixes);
 
 	cerr.flush();
-cerr << "DEBUG3 Aff_Data::parse_aff Parsed " << line_num << " lines" << endl;
+    cerr << "DEBUG3 Aff_Data::parse_aff Parsed " << line_num << " lines" << endl;
 	return in.eof() && !error_happened; // true for success
 }
 
