@@ -38,8 +38,6 @@
 
 #include "Encoding.h"
 #include "encoding_rs.h"
-#define ENCODING_RS_ENCODING mozilla::Encoding
-#define ENCODING_RS_DECODER mozilla::Decoder
 
 struct UConverter; // unicode/ucnv.h
 
@@ -111,8 +109,8 @@ auto has_uppercase_at_compound_word_boundary(const std::wstring& word, size_t i)
 class Encoding_Converter {
 	UConverter* cnv = nullptr;
 
-	struct CEncoding* cenc = nullptr;
-	struct CDecoder* cdec = nullptr;
+	mozilla::Encoding* cenc = nullptr;
+	mozilla::Decoder* cdec = nullptr;
 	int counter;//TODO Only for debug, remove later.
 
       public:
