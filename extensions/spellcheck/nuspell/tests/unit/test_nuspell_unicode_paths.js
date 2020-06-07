@@ -53,7 +53,7 @@ add_task(async function() {
   await OS.File.writeAtomic(dicPath, new TextEncoder().encode(`1\n${WORD}\n`));
   await OS.File.writeAtomic(affPath, new TextEncoder().encode(""));
 
-  spellCheck.loadDictionariesFromDir(baseDir); //TODO Error occurs here.
+  spellCheck.loadDictionariesFromDir(baseDir); //FIXME Error occurs here.
   spellCheck.dictionary = "dict";
 
   ok(

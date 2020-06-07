@@ -27,6 +27,8 @@ rm ${nuspell_dir}/src/main.cxx
 
 rm -rf ${nuspell_dir}/tests/unit/data/*
 cp ${tmpclonedir}/tests/v1cmdline/* ${nuspell_dir}/tests/unit/data/
+cd ${nuspell_dir}/tests/unit/data/
+for i in $(ls *_*); do mv -f $i $(echo $i|sed -e 's/_/-/g'); done
 
 rm -rf ${tmpclonedir}
 
