@@ -37,7 +37,6 @@
 #include <unicode/locid.h>
 
 #include "Encoding.h"
-#include "encoding_rs.h"
 
 struct UConverter; // unicode/ucnv.h
 
@@ -111,41 +110,30 @@ class Encoding_Converter {
 
 	mozilla::Encoding* cenc = nullptr;
 	mozilla::Decoder* cdec = nullptr;
-	int counter;//TODO Only for debug, remove later.
 
       public:
 	Encoding_Converter() = default;
-	explicit Encoding_Converter(const char* enc);
-	explicit Encoding_Converter(const std::string& enc)
-	    : Encoding_Converter(enc.c_str())
-	{
-	}
+	explicit Encoding_Converter(std::string_view enc_name);
 	~Encoding_Converter();
-	Encoding_Converter(const Encoding_Converter& other);
+	Encoding_Converter(const Encoding_Converter& other) = delete;
 	Encoding_Converter(Encoding_Converter&& other) noexcept
 	{
-		cnv = other.cnv;
-		cnv = nullptr;
-
 		cenc = other.cenc;
 		cenc = nullptr;
 		cdec = other.cdec;
 		cdec = nullptr;
 	}
-	auto operator=(const Encoding_Converter& other) -> Encoding_Converter&;
+	auto operator=(const Encoding_Converter& other) -> Encoding_Converter& = delete;
 	auto operator=(Encoding_Converter&& other) noexcept
 	    -> Encoding_Converter&
 	{
-		std::swap(cnv, other.cnv);
-
 		std::swap(cenc, other.cenc);
 		std::swap(cdec, other.cdec);
-
 		return *this;
 	}
 	auto to_wide(const std::string& in, std::wstring& out) -> bool;
 	auto to_wide(const std::string& in) -> std::wstring;
-	auto valid() -> bool { return cnv != nullptr || (cenc != nullptr && cdec != nullptr);}
+	auto valid() -> bool { return cenc != nullptr && cdec != nullptr;}
 };
 
 //#if _POSIX_VERSION >= 200809L
