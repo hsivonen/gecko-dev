@@ -470,18 +470,22 @@ auto has_uppercase_at_compound_word_boundary(const std::wstring& word, size_t i)
 
 Encoding_Converter::Encoding_Converter(const char* enc)
 {
+	printf("DEBUG4 Entering Encoding_Converter::Encoding_Converter(enc=\"%s\")\n", enc); counter = 0;
 	auto err = UErrorCode();
 	cnv = ucnv_open(enc, &err);
+	printf("DEBUG4 Leaving Encoding_Converter::Encoding_Converter err=\"%s\")\n", u_errorName(err));
 }
 
 Encoding_Converter::~Encoding_Converter()
 {
+	printf("DEBUG4 Entering Encoding_Converter::~Encoding_Converter()\n");
 	if (cnv)
 		ucnv_close(cnv);
 }
 
 Encoding_Converter::Encoding_Converter(const Encoding_Converter& other)
 {
+	printf("DEBUG4 Entering Encoding_Converter::Encoding_Converter(other=\"...\")\n"); counter = 0;
 	auto err = UErrorCode();
 	cnv = ucnv_safeClone(other.cnv, nullptr, nullptr, &err);
 }
@@ -489,6 +493,7 @@ Encoding_Converter::Encoding_Converter(const Encoding_Converter& other)
 auto Encoding_Converter::operator=(const Encoding_Converter& other)
     -> Encoding_Converter&
 {
+	printf("DEBUG4 Entering Encoding_Converter::operator=(other=\"...\")\n");
 	this->~Encoding_Converter();
 	auto err = UErrorCode();
 	cnv = ucnv_safeClone(other.cnv, nullptr, nullptr, &err);
@@ -497,6 +502,7 @@ auto Encoding_Converter::operator=(const Encoding_Converter& other)
 
 auto Encoding_Converter::to_wide(const string& in, wstring& out) -> bool
 {
+	if (counter < 4) printf("DEBUG4 Entering Encoding_Converter::to_wide(in=\"%s\",", in.c_str());
 	if (ucnv_getType(cnv) == UCNV_UTF8)
 		return utf8_to_wide(in, out);
 
@@ -506,13 +512,14 @@ auto Encoding_Converter::to_wide(const string& in, wstring& out) -> bool
 		out.clear();
 		return false;
 	}
-	if (icu_to_wide(us, out))
-		return true;
+	if (icu_to_wide(us, out)) {if (counter < 4) printf(" out=\"%ls\")\n", out.c_str()); ++counter;
+		return true;}
 	return false;
 }
 
 auto Encoding_Converter::to_wide(const string& in) -> wstring
 {
+    if (counter < 4) printf("DEBUG4 Entering Encoding_Converter::to_wide(in=\"%s\")\n", in.c_str()); ++counter;
 	auto out = wstring();
 	this->to_wide(in, out);
 	return out;

@@ -33,6 +33,7 @@
                          (defined(__APPLE__) && defined(__MACH__)))
 #include <unistd.h>
 #endif
+//TODO #include "encoding_rs.h"
 
 #include <unicode/locid.h>
 
@@ -105,6 +106,7 @@ auto has_uppercase_at_compound_word_boundary(const std::wstring& word, size_t i)
 
 class Encoding_Converter {
 	UConverter* cnv = nullptr;
+	int counter;//TODO Only for debug, remove later.
 
       public:
 	Encoding_Converter() = default;
