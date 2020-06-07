@@ -481,6 +481,11 @@ Encoding_Converter::~Encoding_Converter()
 	printf("DEBUG4 Entering Encoding_Converter::~Encoding_Converter()\n");
 	if (cnv)
 		ucnv_close(cnv);
+
+    if (cenc)
+		encoder_free(reinterpret_cast<mozilla::Encoder*>(cenc));
+    if (cdec)
+		decoder_free(reinterpret_cast<mozilla::Decoder*>(cdec));
 }
 
 Encoding_Converter::Encoding_Converter(const Encoding_Converter& other)
