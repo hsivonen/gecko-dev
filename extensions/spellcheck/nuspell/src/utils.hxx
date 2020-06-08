@@ -104,32 +104,14 @@ auto has_uppercase_at_compound_word_boundary(const std::wstring& word, size_t i)
     -> bool;
 
 class Encoding_Converter {
-	mozilla::Encoding* cenc = nullptr;
-	mozilla::Decoder* cdec = nullptr;
+	const mozilla::Encoding* cenc = nullptr;
 
       public:
 	Encoding_Converter() = default;
 	explicit Encoding_Converter(std::string_view enc_name);
-	~Encoding_Converter();
-	Encoding_Converter(const Encoding_Converter& other) = delete;
-	Encoding_Converter(Encoding_Converter&& other) noexcept
-	{
-		cenc = other.cenc;
-		cenc = nullptr;
-		cdec = other.cdec;
-		cdec = nullptr;
-	}
-	auto operator=(const Encoding_Converter& other) -> Encoding_Converter& = delete;
-	auto operator=(Encoding_Converter&& other) noexcept
-	    -> Encoding_Converter&
-	{
-		std::swap(cenc, other.cenc);
-		std::swap(cdec, other.cdec);
-		return *this;
-	}
 	auto to_wide(const std::string& in, std::wstring& out) -> bool;
 	auto to_wide(const std::string& in) -> std::wstring;
-	auto valid() -> bool { return cenc != nullptr && cdec != nullptr;}
+	auto valid() -> bool { return cenc != nullptr;}
 };
 
 //#if _POSIX_VERSION >= 200809L

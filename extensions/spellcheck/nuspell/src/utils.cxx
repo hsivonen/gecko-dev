@@ -471,76 +471,16 @@ auto has_uppercase_at_compound_word_boundary(const std::wstring& word, size_t i)
 Encoding_Converter::Encoding_Converter(std::string_view enc_name)
 {
 	auto ptr = reinterpret_cast<const uint8_t*>(enc_name.data());
-    //TODO Because of that issue that was reported
-    //error: assigning to 'mozilla::Encoding *' from incompatible type 'const mozilla::Encoding *'
 	cenc = encoding_for_label_no_replacement(ptr, enc_name.size());
-	if (!cenc)
-		return;
-	cdec = encoding_new_decoder_without_bom_handling(cenc);
-}
-
-Encoding_Converter::~Encoding_Converter()
-{
-	if (cdec)
-		decoder_free(cdec);
 }
 
 auto Encoding_Converter::to_wide(const string& in, wstring& out) -> bool
 {
-    if (cenc == UTF_8_ENCODING)
+	if (cenc == UTF_8_ENCODING)
 		return utf8_to_wide(in, out);
-
-    // status
-    uint32_t result;
-    size_t read;
-    size_t written;
-
-    // output
-    nsString output;
-    
-    // alternative output
-//    nsAutoString output;
-
-    // alternative output with lots of checks
-/*    mozilla::CheckedInt<size_t> needed = cdec->MaxUTF16BufferLength(in.size()); //TODO or max with in.size()?
-    if (!needed.isValid()) {
-        out.clear();
-        return false; //TODO NS_ERROR_OUT_OF_MEMORY;
-    }
-    mozilla::CheckedInt<uint32_t> allocLen(1);  // null terminator due to legacy sadness
-    allocLen += needed.value();
-    if (!allocLen.isValid()) {
-        out.clear();
-        return false; //TODO NS_ERROR_OUT_OF_MEMORY;
-    }
-    nsString output;
-    bool ok = output.SetLength(needed.value(), mozilla::fallible);
-    if (!ok) {
-        out.clear();
-        return false; //TODO Fail(NS_LITERAL_CSTRING("allocation"), mResult.forget(), OS_ERROR_TOO_LARGE);
-    }*/
-
-    // input and decoding
-	auto ptr = reinterpret_cast<const uint8_t*>(in.data());
-    auto input = mozilla::Span<const uint8_t>(ptr, in.size());
-    mozilla::Tie(result, read, written) = cdec->DecodeToUTF16WithoutReplacement(input, output, false);
-
-    // alternative input and decoding, perhaps also without AsBytes()
-//    auto inSpan = mozilla::MakeSpan(in.data(), in.size());
-//    mozilla::Tie(result, read, written) = cdec->DecodeToUTF16WithoutReplacement(AsBytes(inSpan), output, false);
-
-    // check status
-    if (result != mozilla::kInputEmpty) {
-		out.clear();
-		return false;
-	}
-    // more elaborate checks are possible, e.g.
-//    MOZ_ASSERT(result == kInputEmpty);
-//    MOZ_ASSERT(read == src.Length());
-//    MOZ_ASSERT(written <= needed.value());
-
-//FIXME    out = wstring(output.Data(), output.Length());
-    return true;
+	// Use tabs for indentation here in nuspell code.
+	//TODO: Use mozilla_encoding_decode_to_nscstring_without_bom_handling.
+	// It will convert whatever to utf8. then use utf8_to_wide.
 }
 
 auto Encoding_Converter::to_wide(const string& in) -> wstring
