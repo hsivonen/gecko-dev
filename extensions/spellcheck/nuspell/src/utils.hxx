@@ -1,4 +1,4 @@
-/* Copyright 2016-2019 Dimitrij Mijoski
+/* Copyright 2016-2020 Dimitrij Mijoski, Sander van Geloven
  *
  * This file is part of Nuspell.
  *
@@ -36,7 +36,7 @@
 
 #include <unicode/locid.h>
 
-#include "Encoding.h"
+#include "mozilla/Encoding.h"
 
 namespace nuspell {
 

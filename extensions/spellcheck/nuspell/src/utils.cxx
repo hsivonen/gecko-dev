@@ -1,4 +1,4 @@
-/* Copyright 2016-2019 Dimitrij Mijoski
+/* Copyright 2016-2020 Dimitrij Mijoski, Sander van Geloven
  *
  * This file is part of Nuspell.
  *
@@ -478,9 +478,18 @@ auto Encoding_Converter::to_wide(const string& in, wstring& out) -> bool
 {
 	if (cenc == UTF_8_ENCODING)
 		return utf8_to_wide(in, out);
-	// Use tabs for indentation here in nuspell code.
-	//TODO: Use mozilla_encoding_decode_to_nscstring_without_bom_handling.
-	// It will convert whatever to utf8. then use utf8_to_wide.
+
+	nsAutoCString input(in.c_str());
+	nsAutoCString output;
+	auto rv = mozilla_encoding_decode_to_nscstring_without_bom_handling(
+	    cenc, &input, &output);
+	if (rv != NS_OK) {
+		out.clear();
+		return false;
+}
+
+out = utf8_to_wide(string(output.BeginReading(), output.Length()));
+return true;
 }
 
 auto Encoding_Converter::to_wide(const string& in) -> wstring

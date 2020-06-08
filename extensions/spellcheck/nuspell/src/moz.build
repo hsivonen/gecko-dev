@@ -13,11 +13,6 @@ UNIFIED_SOURCES += [
 
 FINAL_LIBRARY = 'xul'
 
-LOCAL_INCLUDES += [
-    '/intl',
-    '/third_party/rust/encoding_c/include',
-]
-
 # Allowing warnings for third-party code that can be updated from upstream.
 AllowCompilerWarnings()
 

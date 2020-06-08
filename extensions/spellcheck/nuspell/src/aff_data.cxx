@@ -1111,7 +1111,7 @@ auto Aff_Data::parse_dic(istream& in) -> bool
 			break;
 		}
 	}
-cerr << "DEBUG3 Aff_Data::parse_dic Parsed " << line_number << " lines" << endl;
+	cerr << "DEBUG3 Aff_Data::parse_dic Parsed " << line_number << " lines" << endl;
 	return in.eof(); // success if we reached eof
 }
 } // namespace nuspell
