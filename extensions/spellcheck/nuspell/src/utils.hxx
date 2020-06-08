@@ -38,8 +38,6 @@
 
 #include "Encoding.h"
 
-struct UConverter; // unicode/ucnv.h
-
 namespace nuspell {
 
 auto wide_to_utf8(const std::wstring& in, std::string& out) -> void;
@@ -106,8 +104,6 @@ auto has_uppercase_at_compound_word_boundary(const std::wstring& word, size_t i)
     -> bool;
 
 class Encoding_Converter {
-	UConverter* cnv = nullptr;
-
 	mozilla::Encoding* cenc = nullptr;
 	mozilla::Decoder* cdec = nullptr;
 
