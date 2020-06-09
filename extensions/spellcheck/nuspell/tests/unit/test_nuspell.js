@@ -16,7 +16,7 @@
  * along with Nuspell.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// "skip", "fixme", "notests" or anything else will skip the test
+// "skip", "fixme" or anything else will skip the test
 // "pass" should result in passing of the test
 // "fail" should result in failing of the test, as can be found in
 // https://github.com/nuspell/nuspell/blob/master/tests/CMakeLists.txt
@@ -29,7 +29,7 @@ const tests = [
   ["pass", "1706659"],
   ["pass", "1975530"],
 
-  ["notests", "2970240"],
+  ["pass", "2970240"],
   ["pass", "2970242"],
   ["pass", "2999225"],
 
@@ -43,7 +43,7 @@ const tests = [
   ["pass", "allcaps2"],
   ["pass", "allcaps3"],
   ["pass", "allcaps-utf"],
-  ["notests", "arabic"],
+  ["pass", "arabic"],
 
   ["pass", "base"],
   ["fail", "base-utf"],
@@ -84,7 +84,7 @@ const tests = [
   ["pass", "condition-utf"],
   ["pass", "conditionalprefix"],
 
-  ["notests", "digits-in-words"],
+  ["pass", "digits-in-words"],
   ["fixme", "dotless-i"],
 
   ["fixme", "encoding", { 1: "todo", 3: "todo" }],
@@ -114,7 +114,7 @@ const tests = [
   ["pass", "iconv2"],
   ["pass", "ignore"],
   [
-    "pass",
+    "fixme",
     "ignoreutf",
     {
       1: "todo",
@@ -170,13 +170,13 @@ const tests = [
   ["pass", "oconv"],
   ["pass", "onlyincompound"],
   ["pass", "onlyincompound2"],
-  ["notests", "opentaal-cpdpat"],
+  ["pass", "opentaal-cpdpat"],
   ["notests", "opentaal-cpdpat2"],
   ["pass", "opentaal-forbiddenword1"],
   ["pass", "opentaal-forbiddenword2"],
   ["pass", "opentaal-keepcase"],
 
-  ["fixme", "phone"], // Should be fail, no lines are read from phone.wrong
+  ["fail", "phone"],
 
   ["pass", "rep"],
   ["notests", "reputf"],
@@ -187,9 +187,9 @@ const tests = [
   ["pass", "sugutf"],
 
   ["pass", "utf8"],
-  ["pass", "utf8-bom", { 1: "todo" }],
-  ["pass", "utf8-bom2", { 1: "todo" }],
-  ["pass", "utf8-nonbmp", { 1: "todo", 2: "todo", 3: "todo", 4: "todo" }],
+  ["fixme", "utf8-bom", { 1: "todo" }],
+  ["fixme", "utf8-bom2", { 1: "todo" }],
+  ["fail", "utf8-nonbmp", { 1: "todo", 2: "todo", 3: "todo", 4: "todo" }],
   ["pass", "utfcompound"],
 
   ["pass", "warn"],
@@ -218,8 +218,7 @@ function* do_get_file_by_line(file) {
     val = {};
     debug_lines++;
   }
-  dump("DEBUG_XXXXXX_js Loop has read for " + file.path + " number of lines " + debug_lines + "\n");
-  //FIXME The while reads 0 lines when file contains only one line.
+  yield val.value;
 }
 
 function do_run_test(checker, action, name, todo_good, todo_wrong) {
