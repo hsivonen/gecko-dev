@@ -17,8 +17,8 @@
  */
 
 // "skip", "fixme" or anything else will skip the test
-// "pass" should result in passing of the test
-// "fail" should result in failing of the test, as can be found in
+// "pass" should result in passing of all of the sub test
+// "fail" should result in failing of at least one the sub tests, see
 // https://github.com/nuspell/nuspell/blob/master/tests/CMakeLists.txt
 
 const tests = [
@@ -46,7 +46,7 @@ const tests = [
   ["pass", "arabic"],
 
   ["pass", "base"],
-  ["fail", "base-utf"],
+  ["fail", "base-utf"], // Should fail on at least good/wrong
   ["pass", "break"],
   ["pass", "breakdefault"],
   ["pass", "breakoff"],
@@ -61,10 +61,10 @@ const tests = [
   ["pass", "checkcompoundpattern4"],
   ["pass", "checkcompoundrep"],
   ["pass", "checkcompoundtriple"],
-  ["fail", "checksharps"],
-  ["fail", "checksharpsutf"],
+  ["fail", "checksharps"], // Should fail on at least sug
+  ["fail", "checksharpsutf"], // Should fail on at least sug
   ["pass", "circumfix"],
-  ["skip", "colons-in-words"], // Suggestion test only
+  ["skip", "colons-in-words"], // Should test only sug
   ["pass", "complexprefixes"],
   ["pass", "complexprefixes2"],
   ["pass", "complexprefixesutf"],
@@ -163,23 +163,23 @@ const tests = [
   ["pass", "needaffix3"],
   ["pass", "needaffix4"],
   ["pass", "needaffix5"],
-  ["fail", "nepali"],
+  ["fail", "nepali"], // Should fail on at least good/wrong
   ["pass", "ngram-utf-fix"],
-  ["fail", "nosuggest"],
+  ["skip", "nosuggest"], // Should fail on at least sug
 
   ["pass", "oconv"],
   ["pass", "onlyincompound"],
   ["pass", "onlyincompound2"],
   ["pass", "opentaal-cpdpat"],
-  ["notests", "opentaal-cpdpat2"],
+  ["pass", "opentaal-cpdpat2"],
   ["pass", "opentaal-forbiddenword1"],
   ["pass", "opentaal-forbiddenword2"],
   ["pass", "opentaal-keepcase"],
 
-  ["fail", "phone"],
+  ["skip", "phone"], // Should fail on at least sug, but passes good/wrong
 
   ["pass", "rep"],
-  ["notests", "reputf"],
+  ["pass", "reputf"],
 
   ["pass", "simplifiedtriple"],
   ["pass", "slash"],
@@ -247,6 +247,7 @@ function do_run_test(checker, action, name, todo_good, todo_wrong) {
   checker.dictionary = name;
 
   let positive_fail = false;
+  let did_checks = false;
 
   var good_counter = 0;
   if (good.exists()) {
@@ -270,6 +271,7 @@ function do_run_test(checker, action, name, todo_good, todo_wrong) {
           positive_fail = true;
         }
       }
+      did_checks = true;
     }
   }
 
@@ -291,22 +293,21 @@ function do_run_test(checker, action, name, todo_good, todo_wrong) {
           Assert.ok(!checker.check(val));
         }
       } else {
-        if (!checker.check(val)) {
+        if (checker.check(val)) {
           positive_fail = true;
         }
       }
+      did_checks = true;
     }
   }
 
-  if (good_counter == 0 && wrong_counter == 0) {
-    // Note that this is not fool proof as one could be 0 even though both
-    // files have words to test. At least it uncovers underlying bug for now.
+  if (!did_checks) {
     do_throw("No tests for good or wrong words were done for " + name + "\n");
   }
 
-  if (action == "fail") {
+  if (action == "fail" && !positive_fail) {
     dump("Expected fail has occurred properly for " + name + "\n");
-    Assert.ok(positive_fail);
+    Assert.ok(false);
   }
 
   // XXXkhuey test suggestions
