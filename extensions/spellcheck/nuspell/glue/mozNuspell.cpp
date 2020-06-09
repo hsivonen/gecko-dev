@@ -406,7 +406,7 @@ mozNuspell::Check(const nsAString& aWord, bool* aResult) {
 
 NS_IMETHODIMP
 mozNuspell::Suggest(const nsAString& aWord, nsTArray<nsString>& aSuggestions) {
-  printf("DEBUG2 Entering mozNuspell::Suggest(const nsAString& aWord=\"%s\",\n", NS_ConvertUTF16toUTF8(aWord).get());
+  printf("DEBUG2 Entering mozNuspell::Suggest(aWord=\"%s\",\n", NS_ConvertUTF16toUTF8(aWord).get());
   MOZ_ASSERT(aSuggestions.IsEmpty());
 
   NS_ConvertUTF16toUTF8 u8word(aWord);
@@ -439,12 +439,14 @@ mozNuspell::Observe(nsISupports* aSubj, const char* aTopic,
 }
 
 NS_IMETHODIMP mozNuspell::AddDirectory(nsIFile* aDir) {
+  std::cout << "DEBUG2 Entering mozNuspell::AddDirectory(aDir=\"" << aDir << "\")\n";
   mDynamicDirectories.AppendObject(aDir);
   LoadDictionaryList(true);
   return NS_OK;
 }
 
 NS_IMETHODIMP mozNuspell::RemoveDirectory(nsIFile* aDir) {
+  std::cout << "DEBUG2 Entering mozNuspell::RemoveDirectory(aDir=\"" << aDir << "\")\n";
   mDynamicDirectories.RemoveObject(aDir);
   LoadDictionaryList(true);
 
@@ -465,6 +467,7 @@ NS_IMETHODIMP mozNuspell::RemoveDirectory(nsIFile* aDir) {
 
 NS_IMETHODIMP mozNuspell::AddDictionary(const nsAString& aLang,
                                          nsIURI* aFile) {
+  std::cout << "DEBUG2 Entering mozNuspell::AddDictionary(aLang=\"" << NS_ConvertUTF16toUTF8(aLang).get() << "\", aFile=\"" << aFile << "\")\n";
   NS_ENSURE_TRUE(aFile, NS_ERROR_INVALID_ARG);
 
   mDynamicDictionaries.Put(aLang, aFile);
@@ -475,6 +478,7 @@ NS_IMETHODIMP mozNuspell::AddDictionary(const nsAString& aLang,
 
 NS_IMETHODIMP mozNuspell::RemoveDictionary(const nsAString& aLang,
                                             nsIURI* aFile, bool* aRetVal) {
+  std::cout << "DEBUG2 Entering mozNuspell::RemoveDictionary(aLang=\"" << NS_ConvertUTF16toUTF8(aLang).get() << "\", aFile=\"" << aFile << "\")\n";
   NS_ENSURE_TRUE(aFile, NS_ERROR_INVALID_ARG);
   *aRetVal = false;
 

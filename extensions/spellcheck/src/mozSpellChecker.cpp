@@ -306,6 +306,7 @@ nsresult mozSpellChecker::GetPersonalDictionary(nsTArray<nsString>* aWordList) {
 
 nsresult mozSpellChecker::GetDictionaryList(
     nsTArray<nsString>* aDictionaryList) {
+  printf("DEBUG1 mozSpellChecker::GetDictionaryList(\n");
   MOZ_ASSERT(aDictionaryList->IsEmpty());
   if (XRE_IsContentProcess()) {
     ContentChild* child = ContentChild::GetSingleton();
@@ -341,6 +342,7 @@ nsresult mozSpellChecker::GetDictionaryList(
 }
 
 nsresult mozSpellChecker::GetCurrentDictionary(nsAString& aDictionary) {
+  printf("DEBUG1 mozSpellChecker::GetCurrentDictionary(aDictionary=\"%s\") {\n", NS_ConvertUTF16toUTF8(aDictionary).get());
   if (XRE_IsContentProcess()) {
     aDictionary = mCurrentDictionary;
     return NS_OK;
@@ -355,6 +357,7 @@ nsresult mozSpellChecker::GetCurrentDictionary(nsAString& aDictionary) {
 }
 
 nsresult mozSpellChecker::SetCurrentDictionary(const nsAString& aDictionary) {
+  printf("DEBUG1 mozSpellChecker::SetCurrentDictionary(aDictionary=\"%s\") {\n", NS_ConvertUTF16toUTF8(aDictionary).get());
   if (XRE_IsContentProcess()) {
     nsString wrappedDict = nsString(aDictionary);
     bool isSuccess;
