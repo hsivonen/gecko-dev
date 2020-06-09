@@ -168,15 +168,15 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
     bool ok;
     rv = NS_ReadLine(mAffStream.get(), &mLineBuffer, affLine, &ok);
     NS_ENSURE_SUCCESS(rv, rv);
+    affStr << affLine.get() << '\n';
+    ++affNumLines;
     if (!ok) {
       mAffStream = nullptr;
       break;
     }
-    affStr << affLine.get() << '\n';
-    ++affNumLines;
   }
   printf("DEBUG2 mozNuspell::SetDictionary affFileName=\"%s\" read %d lines\n", affFileName.get(),  affNumLines);
-//  printf("DEBUG2 mozNuspell::SetDictionary Contents affix file:\n%s", affStr.str().c_str());
+  printf("DEBUG2 mozNuspell::SetDictionary Contents affix file:\n%s", affStr.str().c_str());
 
   auto dictStr = std::stringstream();
   nsCOMPtr<nsIURI> dictUri;
@@ -198,15 +198,15 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
     bool ok;
     rv = NS_ReadLine(mdictStream.get(), &mLineBuffer, dictLine, &ok);
     NS_ENSURE_SUCCESS(rv, rv);
+    dictStr << dictLine.get() << '\n';
+    ++dictNumLines;
     if (!ok) {
       mdictStream = nullptr;
       break;
     }
-    dictStr << dictLine.get() << '\n';
-    ++dictNumLines;
   }
   printf("DEBUG2 mozNuspell::SetDictionary dictFileName=\"%s\" read %d lines\n", dictFileName.get(), dictNumLines);
-//  printf("DEBUG2 mozNuspell::SetDictionary Contents dictionary file:\n%s", dictStr.str().c_str());
+  printf("DEBUG2 mozNuspell::SetDictionary Contents dictionary file:\n%s", dictStr.str().c_str());
 
   affStr.seekg(0);
   dictStr.seekg(0);
