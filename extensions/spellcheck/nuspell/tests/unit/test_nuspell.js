@@ -16,101 +16,106 @@
  * along with Nuspell.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// "skip", "fixme", "notests" or anything else will skip the test
+// "pass" should result in passing of the test
+// "fail" should result in failing of the test, as can be found in
+// https://github.com/nuspell/nuspell/blob/master/tests/CMakeLists.txt
+
 const tests = [
-  ["1463589", "iso-8859-1"],
-  ["1463589-utf", "UTF-8"],
-  ["1592880", "iso-8859-1"],
-  ["1695964", "iso-8859-1"],
-  ["1706659", "iso-8859-1"],
-//FIXME  ["1975530", "UTF-8"],
+  ["pass", "1463589"],
+  ["pass", "1463589-utf"],
+  ["pass", "1592880"],
+  ["pass", "1695964"],
+  ["pass", "1706659"],
+  ["fixme", "1975530"],
 
-  ["2970240", "iso-8859-1"],
-//FIXME  ["2970242", "iso-8859-1"],
-  ["2999225", "iso-8859-1"],
+  ["notests", "2970240"],
+  ["fixme", "2970242"],
+  ["pass", "2999225"],
 
-  ["IJ", "iso-8859-1"],
+  ["pass", "IJ"],
 
-//FIXME  ["affixes", "iso-8859-1"],
-//FIXME  ["alias", "iso-8859-1"],
-//FIXME  ["alias2", "iso-8859-1"],
-//FIXME  ["alias3", "iso-8859-1"],
-//FIXME  ["allcaps", "iso-8859-1"],
-//FIXME  ["allcaps2", "iso-8859-1"],
-//FIXME  ["allcaps3", "iso-8859-1"],
-//FIXME  ["allcaps-utf", "UTF-8"],
-  ["arabic", "UTF-8"],
+  ["fixme", "affixes"],
+  ["fixme", "alias"],
+  ["fixme", "alias2"],
+  ["fixme", "alias3"],
+  ["fixme", "allcaps"],
+  ["fixme", "allcaps2"],
+  ["fixme", "allcaps3"],
+  ["fixme", "allcaps-utf"],
+  ["notests", "arabic"],
 
-//FIXME  ["base", "iso-8859-1"],
-//FIXME  ["base-utf", "UTF-8"],
-//FIXME  ["break", "UTF-8"],
-//FIXME  ["breakdefault", "UTF-8"],
-//FIXME  ["breakoff", "iso-8859-1"],
+  ["pass", "base"], //FIXME Set to "pass" for now for first priority error. Fails on the correct word "Nuspell."
+  ["fail", "base-utf"],
+  ["fixme", "break"],
+  ["fixme", "breakdefault"],
+  ["fixme", "breakoff"],
 
-//FIXME  ["checkcompoundcase", "iso-8859-1"],
-//FIXME  ["checkcompoundcase2", "iso-8859-1"],
-//FIXME  ["checkcompoundcaseutf", "UTF-8"],
-//FIXME  ["checkcompounddup", "iso-8859-1"],
-//FIXME  ["checkcompoundpattern", "iso-8859-1"],
-//FIXME  ["checkcompoundpattern2", "iso-8859-1"],
-//FIXME  ["checkcompoundpattern3", "iso-8859-1"],
-  ["checkcompoundpattern4", "iso-8859-1"],
-//FIXME  ["checkcompoundrep", "iso-8859-1"],
-//FIXME  ["checkcompoundtriple", "iso-8859-1"],
-//FIXME  ["checksharps", "iso-8859-1"],
-//FIXME  ["checksharpsutf", "UTF-8"],
-//FIXME  ["circumfix", "iso-8859-1"],
-//  ["colons-in-words", "iso-8859-1"], Suggestion test only
-//FIXME  ["complexprefixes", "iso-8859-1"],
-  ["complexprefixes2", "iso-8859-1"],
-//FIXME  ["complexprefixesutf", "UTF-8"],
-//FIXME  ["compoundaffix", "iso-8859-1"],
-//FIXME  ["compoundaffix2", "iso-8859-1"],
-//FIXME  ["compoundaffix3", "iso-8859-1"],
-  ["compoundflag", "iso-8859-1"],
-//FIXME  ["compoundrule", "iso-8859-1"],
-//FIXME  ["compoundrule2", "iso-8859-1"],
-//FIXME  ["compoundrule3", "iso-8859-1"],
-//FIXME  ["compoundrule4", "iso-8859-1"],
-//FIXME  ["compoundrule5", "UTF-8"],
-//FIXME  ["compoundrule6", "iso-8859-1"],
-//FIXME  ["compoundrule7", "iso-8859-1"],
-//FIXME  ["compoundrule8", "iso-8859-1"],
-//FIXME  ["condition", "iso-8859-2"],
-//FIXME  ["condition-utf", "UTF-8"],
-//FIXME  ["conditionalprefix", "iso-8859-1"],
+  ["fixme", "checkcompoundcase"],
+  ["fixme", "checkcompoundcase2"],
+  ["fixme", "checkcompoundcaseutf"],
+  ["fixme", "checkcompounddup"],
+  ["fixme", "checkcompoundpattern"],
+  ["fixme", "checkcompoundpattern2"],
+  ["fixme", "checkcompoundpattern3"],
+  ["pass", "checkcompoundpattern4"],
+  ["fixme", "checkcompoundrep"],
+  ["fixme", "checkcompoundtriple"],
+  ["fail", "checksharps"],
+  ["fail", "checksharpsutf"],
+  ["fixme", "circumfix"],
+  ["skip", "colons-in-words"], // Suggestion test only
+  ["fixme", "complexprefixes"],
+  ["pass", "complexprefixes2"],
+  ["fixme", "complexprefixesutf"],
+  ["fixme", "compoundaffix"],
+  ["fixme", "compoundaffix2"],
+  ["fixme", "compoundaffix3"],
+  ["pass", "compoundflag"],
+  ["fixme", "compoundrule"],
+  ["fixme", "compoundrule2"],
+  ["fixme", "compoundrule3"],
+  ["fixme", "compoundrule4"],
+  ["fixme", "compoundrule5"],
+  ["fixme", "compoundrule6"],
+  ["fixme", "compoundrule7"],
+  ["fixme", "compoundrule8"],
+  ["fixme", "condition"],
+  ["fixme", "condition-utf"],
+  ["fixme", "conditionalprefix"],
 
-  ["digits-in-words", "UTF-8"],
-//FIXME  ["dotless-i", "UTF-8"],
+  ["notests", "digits-in-words"],
+  ["fixme", "dotless-i"],
 
-//FIXME  ["encoding", "iso-8859-15", { 1: "todo", 3: "todo" }],
+  ["fixme", "encoding", { 1: "todo", 3: "todo" }],
 
-//FIXME  ["flag", "iso-8859-1"],
-//FIXME  ["flaglong", "iso-8859-1"],
-//FIXME  ["flagnum", "iso-8859-1"],
-//FIXME  ["flagutf8", "UTF-8"],
-//FIXME  ["fogemorpheme", "iso-8859-1"],
-  ["forbiddenword", "iso-8859-1"],
-//FIXME  ["forceucase", "iso-8859-1"],
-//FIXME  ["fullstrip", "iso-8859-15"],
+  ["fixme", "flag"],
+  ["fixme", "flaglong"],
+  ["fixme", "flagnum"],
+  ["fixme", "flagutf8"],
+  ["fixme", "fogemorpheme"],
+  ["pass", "forbiddenword"],
+  ["fixme", "forceucase"],
+  ["fixme", "fullstrip"],
 
-  ["germancompounding", "iso-8859-1"],
-  ["germancompoundingold", "iso-8859-1"],
+  ["pass", "germancompounding"],
+  ["pass", "germancompoundingold"],
 
-  ["hu", "UTF-8"],
+  ["pass", "hu"],
 
-  ["i35725", "iso-8859-1"],
-  ["i53643", "iso-8859-1"],
-//FIXME  ["i54633", "iso-8859-1"],
-//FIXME  ["i54980", "iso-8859-15", { 1: "todo", 3: "todo" }],
-//FIXME  ["i58202", "iso-8859-1"],
-  ["i68568", "iso-8859-1"],
-  ["i68568utf", "UTF-8"],
-//FIXME  ["iconv", "UTF-8"],
-  ["iconv2", "UTF-8"],
-//FIXME  ["ignore", "iso-8859-1"],
+  ["pass", "i35725"],
+  ["pass", "i53643"],
+  ["fixme", "i54633"],
+  ["fixme", "i54980", { 1: "todo", 3: "todo" }],
+  ["fixme", "i58202"],
+  ["pass", "i68568"],
+  ["pass", "i68568utf"],
+  ["fixme", "iconv"],
+  ["pass", "iconv2"],
+  ["fixme", "ignore"],
   [
+    "pass",
     "ignoreutf",
-    "UTF-8",
     {
       1: "todo",
       2: "todo",
@@ -123,12 +128,13 @@ const tests = [
     },
   ],
 
-  ["keepcase", "iso-8859-1"],
-//FIXME  ["korean", "UTF-8"],
+  ["pass", "keepcase"],
+  ["fixme", "korean"],
 
-  ["map", "iso-8859-1"],
-  ["maputf", "UTF-8"],
-/*FIXME  [
+  ["pass", "map"],
+  ["pass", "maputf"],
+  [
+    "fixme",
     "morph",
     "us-ascii",
     {
@@ -150,89 +156,102 @@ const tests = [
       26: "todo",
       27: "todo",
     },
-  ],*/
+  ],
 
-//FIXME  ["needaffix", "iso-8859-1"],
-//FIXME  ["needaffix2", "iso-8859-1"],
-//FIXME  ["needaffix3", "iso-8859-1"],
-//FIXME  ["needaffix4", "iso-8859-1"],
-//FIXME  ["needaffix5", "iso-8859-1"],
-//FIXME  ["nepali", "UTF-8"],
-  ["ngram-utf-fix", "UTF-8"],
-//FIXME  ["nosuggest", "iso-8859-1"],
+  ["fixme", "needaffix"],
+  ["fixme", "needaffix2"],
+  ["fixme", "needaffix3"],
+  ["fixme", "needaffix4"],
+  ["fixme", "needaffix5"],
+  ["fail", "nepali"],
+  ["pass", "ngram-utf-fix"],
+  ["fail", "nosuggest"],
 
-  ["oconv", "UTF-8"],
-//FIXME  ["onlyincompound", "iso-8859-1"],
-//FIXME  ["onlyincompound2", "iso-8859-1"],
-  ["opentaal-cpdpat", "iso-8859-1"],
-  ["opentaal-cpdpat2", "iso-8859-1"],
-//FIXME  ["opentaal-forbiddenword1", "UTF-8"],
-//FIXME  ["opentaal-forbiddenword2", "UTF-8"],
-  ["opentaal-keepcase", "UTF-8"],
+  ["pass", "oconv"],
+  ["fixme", "onlyincompound"],
+  ["fixme", "onlyincompound2"],
+  ["notests", "opentaal-cpdpat"],
+  ["notests", "opentaal-cpdpat2"],
+  ["fixme", "opentaal-forbiddenword1"],
+  ["fixme", "opentaal-forbiddenword2"],
+  ["pass", "opentaal-keepcase"],
 
-  ["phone", "iso-8859-1"],
+  ["fixme", "phone"], // Should be fail, no lines are read from phone.wrong
 
-  ["rep", "iso-8859-1"],
-  ["reputf", "UTF-8"],
+  ["pass", "rep"],
+  ["notests", "reputf"],
 
-//FIXME  ["simplifiedtriple", "iso-8859-1"],
-  ["slash", "iso-8859-1"],
-//FIXME  ["sug", "iso-8859-1"],
-  ["sugutf", "UTF-8"],
+  ["fixme", "simplifiedtriple"],
+  ["pass", "slash"],
+  ["fixme", "sug"],
+  ["pass", "sugutf"],
 
-//FIXME  ["utf8", "UTF-8"],
-  ["utf8-bom", "UTF-8", { 1: "todo" }],
-  ["utf8-bom2", "UTF-8", { 1: "todo" }],
-  ["utf8-nonbmp", "UTF-8", { 1: "todo", 2: "todo", 3: "todo", 4: "todo" }],
-//FIXME  ["utfcompound", "UTF-8"],
+  ["fixme", "utf8"],
+  ["pass", "utf8-bom", { 1: "todo" }],
+  ["pass", "utf8-bom2", { 1: "todo" }],
+  ["pass", "utf8-nonbmp", { 1: "todo", 2: "todo", 3: "todo", 4: "todo" }],
+  ["fixme", "utfcompound"],
 
-  ["warn", "iso-8859-1"],
+  ["pass", "warn"],
 
-//FIXME  ["zeroaffix", "iso-8859-1"],
+  ["fixme", "zeroaffix"],
 ];
 
 // eslint-disable-next-line no-shadow
-function* do_get_file_by_line(file, charset) {
+function* do_get_file_by_line(file) {
   dump("Getting file by line for file " + file.path + "\n");
-  dump("Using charset " + charset + "\n");
   let fis = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(
     Ci.nsIFileInputStream
   );
-  fis.init(file, 0x1 /* READONLY */, 0o444, Ci.nsIFileInputStream.CLOSE_ON_EOF);
+  fis.init(file, 0x01, 0o444, Ci.nsIFileInputStream.CLOSE_ON_EOF);
 
   let lis = Cc["@mozilla.org/intl/converter-input-stream;1"].createInstance(
     Ci.nsIConverterInputStream
   );
-  lis.init(fis, charset, 1024, 0);
+  lis.init(fis, "UTF-8", 1024, 0x0000);
   lis.QueryInterface(Ci.nsIUnicharLineInputStream);
 
   let val = {};
+  let debug_lines = 0;
   while (lis.readLine(val)) {
     yield val.value;
     val = {};
+    debug_lines++;
   }
+  dump("DEBUG_XXXXXX_js Loop has read for " + file.path + " number of lines " + debug_lines + "\n");
+  //FIXME The while reads 0 lines when file contains only one line.
 }
 
-function do_run_test(checker, name, charset, todo_good, todo_bad) {
+function do_run_test(checker, action, name, todo_good, todo_wrong) {
+  if (action != "pass" && action != "fail") {
+    dump("Skipping test for " + name + "\n");
+    return;
+  }
   dump("\n\n\n\n");
-  dump("Running test for " + name + "\n");
+  if (action == "pass") {
+    dump("Running test for " + name + " that should pass\n");
+  } else {
+    dump("Running test for " + name + " that should fail\n");
+  }
   if (!checker) {
     do_throw("Need a spelling checker here");
   }
 
   let good = do_get_file("data/" + name + ".good", true);
-  let bad = do_get_file("data/" + name + ".wrong", true);
+  let wrong = do_get_file("data/" + name + ".wrong", true);
   let sug = do_get_file("data/" + name + ".sug", true);
 
   dump("Need some expected output\n");
-  Assert.ok(good.exists() || bad.exists() || sug.exists());
+  Assert.ok(good.exists() || wrong.exists() || sug.exists());
 
   dump("Setting dictionary to " + name + "\n");
   checker.dictionary = name;
 
+  let positive_fail = false;
+
+  var good_counter = 0;
   if (good.exists()) {
-    var good_counter = 0;
-    for (const val of do_get_file_by_line(good, charset)) {
+    for (const val of do_get_file_by_line(good)) {
       let todo = false;
       good_counter++;
       if (todo_good && todo_good[good_counter]) {
@@ -241,31 +260,54 @@ function do_run_test(checker, name, charset, todo_good, todo_bad) {
       }
 
       dump("Expect word " + val + " is spelled correctly\n");
-      if (todo) {
-        todo_check_true(checker.check(val));
+      if (action == "pass") {
+        if (todo) {
+          todo_check_true(checker.check(val));
+        } else {
+          Assert.ok(checker.check(val));
+        }
       } else {
-        Assert.ok(checker.check(val));
+        if (!checker.check(val)) {
+          positive_fail = true;
+        }
       }
     }
   }
 
-  if (bad.exists()) {
-    var bad_counter = 0;
-    for (const val of do_get_file_by_line(bad, charset)) {
+  var wrong_counter = 0;
+  if (wrong.exists()) {
+    for (const val of do_get_file_by_line(wrong)) {
       let todo = false;
-      bad_counter++;
-      if (todo_bad && todo_bad[bad_counter]) {
+      wrong_counter++;
+      if (todo_wrong && todo_wrong[wrong_counter]) {
         todo = true;
         dump("TODO\n");
       }
 
       dump("Expect word " + val + " is spelled wrong\n");
-      if (todo) {
-        todo_check_false(checker.check(val));
+      if (action == "pass") {
+        if (todo) {
+          todo_check_false(checker.check(val));
+        } else {
+          Assert.ok(!checker.check(val));
+        }
       } else {
-        Assert.ok(!checker.check(val));
+        if (!checker.check(val)) {
+          positive_fail = true;
+        }
       }
     }
+  }
+
+  if (good_counter == 0 && wrong_counter == 0) {
+    // Note that this is not fool proof as one could be 0 even though both
+    // files have words to test. At least it uncovers underlying bug for now.
+    do_throw("No tests for good or wrong words were done for " + name + "\n");
+  }
+
+  if (action == "fail") {
+    dump("Expected fail has occurred properly for " + name + "\n");
+    Assert.ok(positive_fail);
   }
 
   // XXXkhuey test suggestions
@@ -279,11 +321,11 @@ function run_test() {
   Assert.ok(!!spellChecker, "Should have a spelling checker");
   spellChecker.QueryInterface(Ci.mozISpellCheckingEngine);
   let testdir = do_get_file("data/", false);
-  spellChecker.loadDictionariesFromDir(testdir); //FIXME Error occurs here.
+  spellChecker.loadDictionariesFromDir(testdir);
 
   function do_run_test_closure(test) {
-    let [name, charset, todo_good, todo_bad] = test;
-    do_run_test(spellChecker, name, charset, todo_good, todo_bad);
+    let [action, name, todo_good, todo_wrong] = test;
+    do_run_test(spellChecker, action, name, todo_good, todo_wrong);
   }
 
   tests.forEach(do_run_test_closure);
