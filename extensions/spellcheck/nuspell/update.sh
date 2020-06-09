@@ -1,9 +1,9 @@
 #!/bin/sh
 
-# Copyright 2020 Sander van Geloven for only the Nuspell integration
+# Copyright 2020 Sander van Geloven for the Nuspell integration
 
 if [ $# -lt 1 ]; then
-  echo update.sh "<release tag name>"
+  echo update.sh "<release tag name, probably nothrows>"
   exit 1
 fi
 
@@ -27,9 +27,12 @@ rm ${nuspell_dir}/src/main.cxx
 
 rm -rf ${nuspell_dir}/tests/unit/data/*
 cp ${tmpclonedir}/tests/v1cmdline/* ${nuspell_dir}/tests/unit/data/
-cd ${nuspell_dir}/tests/unit/data/
-for i in $(ls *_*); do mv -f $i $(echo $i|sed -e 's/_/-/g'); done
-
 rm -rf ${tmpclonedir}
 
-cd ${nuspell_dir}/src
+# Rename test files so that underscores become hyphens as is convention here.
+for i in $(ls ${nuspell_dir}/tests/unit/data/*_*); do
+  mv -f $i $(echo $i|sed -e 's/_/-/g')
+done
+
+cd ${nuspell_dir}/src/
+patch -p5 < ../patches/encodingconverter.patch
