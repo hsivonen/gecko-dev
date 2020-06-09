@@ -479,17 +479,17 @@ auto Encoding_Converter::to_wide(const string& in, wstring& out) -> bool
 	if (cenc == UTF_8_ENCODING)
 		return utf8_to_wide(in, out);
 
-	nsAutoCString input(in.c_str());
+	nsAutoCString input(in.data(), in.size());
 	nsAutoCString output;
 	auto rv = mozilla_encoding_decode_to_nscstring_without_bom_handling(
 	    cenc, &input, &output);
 	if (rv != NS_OK) {
 		out.clear();
 		return false;
-}
+	}
 
-out = utf8_to_wide(string(output.BeginReading(), output.Length()));
-return true;
+	out = utf8_to_wide(string(output.Data(), output.Length()));
+	return true;
 }
 
 auto Encoding_Converter::to_wide(const string& in) -> wstring
