@@ -163,14 +163,14 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
   rv = affChannel->Open(getter_AddRefs(mAffStream));
   NS_ENSURE_SUCCESS(rv, rv);
   int affNumLines = 0;
-  nsCString affLine; //TODO Which is best? nsACString/nsCString/nsAString
+  nsCString affLine; //TODO nsCString or nsAutoCString
   while (mAffStream) {
-    bool ok;
-    rv = NS_ReadLine(mAffStream.get(), &mLineBuffer, affLine, &ok);
+    bool more;
+    rv = NS_ReadLine(mAffStream.get(), &mLineBuffer, affLine, &more);
     NS_ENSURE_SUCCESS(rv, rv);
     affStr << affLine.get() << '\n';
     ++affNumLines;
-    if (!ok) {
+    if (!more) {
       mAffStream = nullptr;
       break;
     }
@@ -193,14 +193,14 @@ mozNuspell::SetDictionary(const nsAString& aDictionary) {
   rv = dictChannel->Open(getter_AddRefs(mdictStream));
   NS_ENSURE_SUCCESS(rv, rv);
   int dictNumLines = 0;
-  nsCString dictLine; //TODO Which is best? nsACString/nsCString/nsAString
+  nsCString dictLine; //TODO nsCString or nsAutoCString
   while (mdictStream) {
-    bool ok;
-    rv = NS_ReadLine(mdictStream.get(), &mLineBuffer, dictLine, &ok);
+    bool more;
+    rv = NS_ReadLine(mdictStream.get(), &mLineBuffer, dictLine, &more);
     NS_ENSURE_SUCCESS(rv, rv);
     dictStr << dictLine.get() << '\n';
     ++dictNumLines;
-    if (!ok) {
+    if (!more) {
       mdictStream = nullptr;
       break;
     }
