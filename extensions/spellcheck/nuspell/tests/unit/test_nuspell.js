@@ -85,9 +85,9 @@ const tests = [
   ["pass", "conditionalprefix"],
 
   ["pass", "digits-in-words"],
-  ["pass", "dotless-i"],
+  ["pass", "dotless-i"], // "DİYARBAKIR" is wrong ICU pre version 67, has patch
 
-  ["fixme", "encoding", { 1: "todo", 3: "todo" }], //FIXME
+  ["fixme", "encoding", { 1: "todo", 3: "todo" }], //FIXME Fails on all good words. Identical test as "i54980", remove one upstream?
 
   ["pass", "flag"],
   ["pass", "flaglong"],
@@ -106,15 +106,15 @@ const tests = [
   ["pass", "i35725"],
   ["pass", "i53643"],
   ["pass", "i54633"],
-  ["fixme", "i54980", { 1: "todo", 3: "todo" }], //FIXME Identical problem as "encoding". Duplicate tests, can be removed upstream?
-  ["pass", "i58202"],
+  ["fixme", "i54980", { 1: "todo", 3: "todo" }], //FIXME Fails on all good words. Identical test as "encoding", remove one upstream?
+  ["fixme", "i58202"], //FIXME "BAZ and "BOO" should be good, see "utf8-bom" and "utf8-bom2"
   ["pass", "i68568"],
   ["pass", "i68568utf"],
   ["pass", "iconv"],
   ["pass", "iconv2"],
   ["pass", "ignore"],
   [
-    "fixme", //FIXME Encoding, combining and or RTL with https://unicode-table.com/en/0652/
+    "fixme", //FIXME Encoding, combining character and/or RTL with https://unicode-table.com/en/0652/
     "ignoreutf",
     {
       1: "todo",
@@ -186,8 +186,8 @@ const tests = [
   ["pass", "sugutf"],
 
   ["pass", "utf8"],
-  ["fixme", "utf8-bom", { 1: "todo" }], //FIXME
-  ["fixme", "utf8-bom2", { 1: "todo" }], //FIXME
+  ["fixme", "utf8-bom", { 1: "todo" }], //FIXME "APÉRITIF" should be good, see "i58202" and "utf8-bom2"
+  ["fixme", "utf8-bom2", { 1: "todo" }], //FIXME "APÉRITIF" should be good, see "i58202" and "utf8-bom"
   ["fail", "utf8-nonbmp", { 1: "todo", 2: "todo", 3: "todo", 4: "todo" }],
   ["pass", "utfcompound"],
 
