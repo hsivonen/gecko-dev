@@ -85,9 +85,9 @@ const tests = [
   ["pass", "conditionalprefix"],
 
   ["pass", "digits-in-words"],
-  ["fixme", "dotless-i"],
+  ["pass", "dotless-i"],
 
-  ["fixme", "encoding", { 1: "todo", 3: "todo" }],
+  ["fixme", "encoding", { 1: "todo", 3: "todo" }], //FIXME
 
   ["pass", "flag"],
   ["pass", "flaglong"],
@@ -106,15 +106,15 @@ const tests = [
   ["pass", "i35725"],
   ["pass", "i53643"],
   ["pass", "i54633"],
-  ["fixme", "i54980", { 1: "todo", 3: "todo" }],
-  ["fixme", "i58202"],
+  ["fixme", "i54980", { 1: "todo", 3: "todo" }], //FIXME Identical problem as "encoding". Duplicate tests, can be removed upstream?
+  ["pass", "i58202"],
   ["pass", "i68568"],
   ["pass", "i68568utf"],
   ["pass", "iconv"],
   ["pass", "iconv2"],
   ["pass", "ignore"],
   [
-    "fixme",
+    "fixme", //FIXME Encoding, combining and or RTL with https://unicode-table.com/en/0652/
     "ignoreutf",
     {
       1: "todo",
@@ -134,9 +134,8 @@ const tests = [
   ["pass", "map"],
   ["pass", "maputf"],
   [
-    "fixme",
+    "pass",
     "morph",
-    "us-ascii",
     {
       11: "todo",
       12: "todo",
@@ -187,8 +186,8 @@ const tests = [
   ["pass", "sugutf"],
 
   ["pass", "utf8"],
-  ["fixme", "utf8-bom", { 1: "todo" }],
-  ["fixme", "utf8-bom2", { 1: "todo" }],
+  ["fixme", "utf8-bom", { 1: "todo" }], //FIXME
+  ["fixme", "utf8-bom2", { 1: "todo" }], //FIXME
   ["fail", "utf8-nonbmp", { 1: "todo", 2: "todo", 3: "todo", 4: "todo" }],
   ["pass", "utfcompound"],
 
