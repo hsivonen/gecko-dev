@@ -1,4 +1,4 @@
-/* Copyright 2016-2019 Dimitrij Mijoski
+/* Copyright 2016-2020 Dimitrij Mijoski, Sander van Geloven
  *
  * This file is part of Nuspell.
  *
@@ -468,47 +468,28 @@ auto has_uppercase_at_compound_word_boundary(const std::wstring& word, size_t i)
 	return false;
 }
 
-Encoding_Converter::Encoding_Converter(const char* enc)
+Encoding_Converter::Encoding_Converter(std::string_view enc_name)
 {
-	auto err = UErrorCode();
-	cnv = ucnv_open(enc, &err);
-}
-
-Encoding_Converter::~Encoding_Converter()
-{
-	if (cnv)
-		ucnv_close(cnv);
-}
-
-Encoding_Converter::Encoding_Converter(const Encoding_Converter& other)
-{
-	auto err = UErrorCode();
-	cnv = ucnv_safeClone(other.cnv, nullptr, nullptr, &err);
-}
-
-auto Encoding_Converter::operator=(const Encoding_Converter& other)
-    -> Encoding_Converter&
-{
-	this->~Encoding_Converter();
-	auto err = UErrorCode();
-	cnv = ucnv_safeClone(other.cnv, nullptr, nullptr, &err);
-	return *this;
+	auto ptr = reinterpret_cast<const uint8_t*>(enc_name.data());
+	cenc = encoding_for_label_no_replacement(ptr, enc_name.size());
 }
 
 auto Encoding_Converter::to_wide(const string& in, wstring& out) -> bool
 {
-	if (ucnv_getType(cnv) == UCNV_UTF8)
+	if (cenc == UTF_8_ENCODING)
 		return utf8_to_wide(in, out);
 
-	auto err = U_ZERO_ERROR;
-	auto us = icu::UnicodeString(in.data(), in.size(), cnv, err);
-	if (U_FAILURE(err)) {
+	nsAutoCString input(in.data(), in.size());
+	nsAutoCString output;
+	auto rv = mozilla_encoding_decode_to_nscstring_without_bom_handling(
+	    cenc, &input, &output);
+	if (rv != NS_OK) {
 		out.clear();
 		return false;
 	}
-	if (icu_to_wide(us, out))
-		return true;
-	return false;
+
+	out = utf8_to_wide(string(output.Data(), output.Length()));
+	return true;
 }
 
 auto Encoding_Converter::to_wide(const string& in) -> wstring

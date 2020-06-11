@@ -1,4 +1,4 @@
-/* Copyright 2016-2019 Dimitrij Mijoski
+/* Copyright 2016-2020 Dimitrij Mijoski, Sander van Geloven
  *
  * This file is part of Nuspell.
  *
@@ -36,7 +36,7 @@
 
 #include <unicode/locid.h>
 
-struct UConverter; // unicode/ucnv.h
+#include "mozilla/Encoding.h"
 
 namespace nuspell {
 
@@ -104,32 +104,14 @@ auto has_uppercase_at_compound_word_boundary(const std::wstring& word, size_t i)
     -> bool;
 
 class Encoding_Converter {
-	UConverter* cnv = nullptr;
+	const mozilla::Encoding* cenc = nullptr;
 
       public:
 	Encoding_Converter() = default;
-	explicit Encoding_Converter(const char* enc);
-	explicit Encoding_Converter(const std::string& enc)
-	    : Encoding_Converter(enc.c_str())
-	{
-	}
-	~Encoding_Converter();
-	Encoding_Converter(const Encoding_Converter& other);
-	Encoding_Converter(Encoding_Converter&& other) noexcept
-	{
-		cnv = other.cnv;
-		cnv = nullptr;
-	}
-	auto operator=(const Encoding_Converter& other) -> Encoding_Converter&;
-	auto operator=(Encoding_Converter&& other) noexcept
-	    -> Encoding_Converter&
-	{
-		std::swap(cnv, other.cnv);
-		return *this;
-	}
+	explicit Encoding_Converter(std::string_view enc_name);
 	auto to_wide(const std::string& in, std::wstring& out) -> bool;
 	auto to_wide(const std::string& in) -> std::wstring;
-	auto valid() -> bool { return cnv != nullptr; }
+	auto valid() -> bool { return cenc != nullptr; }
 };
 
 //#if _POSIX_VERSION >= 200809L
