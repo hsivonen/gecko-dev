@@ -1,0 +1,123 @@
+diff --git a/extensions/spellcheck/nuspell/src/utils.cxx b/extensions/spellcheck/nuspell/src/utils.cxx
+--- a/extensions/spellcheck/nuspell/src/utils.cxx
++++ b/extensions/spellcheck/nuspell/src/utils.cxx
+@@ -1,4 +1,4 @@
+-/* Copyright 2016-2019 Dimitrij Mijoski
++/* Copyright 2016-2020 Dimitrij Mijoski, Sander van Geloven
+  *
+  * This file is part of Nuspell.
+  *
+@@ -468,47 +468,28 @@ auto has_uppercase_at_compound_word_boun
+ 	return false;
+ }
+ 
+-Encoding_Converter::Encoding_Converter(const char* enc)
++Encoding_Converter::Encoding_Converter(std::string_view enc_name)
+ {
+-	auto err = UErrorCode();
+-	cnv = ucnv_open(enc, &err);
+-}
+-
+-Encoding_Converter::~Encoding_Converter()
+-{
+-	if (cnv)
+-		ucnv_close(cnv);
+-}
+-
+-Encoding_Converter::Encoding_Converter(const Encoding_Converter& other)
+-{
+-	auto err = UErrorCode();
+-	cnv = ucnv_safeClone(other.cnv, nullptr, nullptr, &err);
+-}
+-
+-auto Encoding_Converter::operator=(const Encoding_Converter& other)
+-    -> Encoding_Converter&
+-{
+-	this->~Encoding_Converter();
+-	auto err = UErrorCode();
+-	cnv = ucnv_safeClone(other.cnv, nullptr, nullptr, &err);
+-	return *this;
++	auto ptr = reinterpret_cast<const uint8_t*>(enc_name.data());
++	cenc = encoding_for_label_no_replacement(ptr, enc_name.size());
+ }
+ 
+ auto Encoding_Converter::to_wide(const string& in, wstring& out) -> bool
+ {
+-	if (ucnv_getType(cnv) == UCNV_UTF8)
++	if (cenc == UTF_8_ENCODING)
+ 		return utf8_to_wide(in, out);
+ 
+-	auto err = U_ZERO_ERROR;
+-	auto us = icu::UnicodeString(in.data(), in.size(), cnv, err);
+-	if (U_FAILURE(err)) {
++	nsAutoCString input(in.data(), in.size());
++	nsAutoCString output;
++	auto rv = mozilla_encoding_decode_to_nscstring_without_bom_handling(
++	    cenc, &input, &output);
++	if (rv != NS_OK) {
+ 		out.clear();
+ 		return false;
+ 	}
+-	if (icu_to_wide(us, out))
+-		return true;
+-	return false;
++
++	out = utf8_to_wide(string(output.Data(), output.Length()));
++	return true;
+ }
+ 
+ auto Encoding_Converter::to_wide(const string& in) -> wstring
+diff --git a/extensions/spellcheck/nuspell/src/utils.hxx b/extensions/spellcheck/nuspell/src/utils.hxx
+--- a/extensions/spellcheck/nuspell/src/utils.hxx
++++ b/extensions/spellcheck/nuspell/src/utils.hxx
+@@ -1,4 +1,4 @@
+-/* Copyright 2016-2019 Dimitrij Mijoski
++/* Copyright 2016-2020 Dimitrij Mijoski, Sander van Geloven
+  *
+  * This file is part of Nuspell.
+  *
+@@ -36,7 +36,7 @@
+ 
+ #include <unicode/locid.h>
+ 
+-struct UConverter; // unicode/ucnv.h
++#include "mozilla/Encoding.h"
+ 
+ namespace nuspell {
+ 
+@@ -104,32 +104,14 @@ auto has_uppercase_at_compound_word_boun
+     -> bool;
+ 
+ class Encoding_Converter {
+-	UConverter* cnv = nullptr;
++	const mozilla::Encoding* cenc = nullptr;
+ 
+       public:
+ 	Encoding_Converter() = default;
+-	explicit Encoding_Converter(const char* enc);
+-	explicit Encoding_Converter(const std::string& enc)
+-	    : Encoding_Converter(enc.c_str())
+-	{
+-	}
+-	~Encoding_Converter();
+-	Encoding_Converter(const Encoding_Converter& other);
+-	Encoding_Converter(Encoding_Converter&& other) noexcept
+-	{
+-		cnv = other.cnv;
+-		cnv = nullptr;
+-	}
+-	auto operator=(const Encoding_Converter& other) -> Encoding_Converter&;
+-	auto operator=(Encoding_Converter&& other) noexcept
+-	    -> Encoding_Converter&
+-	{
+-		std::swap(cnv, other.cnv);
+-		return *this;
+-	}
++	explicit Encoding_Converter(std::string_view enc_name);
+ 	auto to_wide(const std::string& in, std::wstring& out) -> bool;
+ 	auto to_wide(const std::string& in) -> std::wstring;
+-	auto valid() -> bool { return cnv != nullptr; }
++	auto valid() -> bool { return cenc != nullptr; }
+ };
+ 
+ //#if _POSIX_VERSION >= 200809L
