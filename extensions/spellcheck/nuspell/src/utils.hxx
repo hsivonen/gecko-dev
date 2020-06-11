@@ -111,7 +111,7 @@ class Encoding_Converter {
 	explicit Encoding_Converter(std::string_view enc_name);
 	auto to_wide(const std::string& in, std::wstring& out) -> bool;
 	auto to_wide(const std::string& in) -> std::wstring;
-	auto valid() -> bool { return cenc != nullptr;}
+	auto valid() -> bool { return cenc != nullptr; }
 };
 
 //#if _POSIX_VERSION >= 200809L
