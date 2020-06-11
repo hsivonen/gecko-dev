@@ -21,6 +21,8 @@
 // "fail" should result in failing of at least one the sub tests, see
 // https://github.com/nuspell/nuspell/blob/master/tests/CMakeLists.txt
 
+// The todo were left by the original author to implement suggestion testing.
+
 const tests = [
   ["pass", "1463589"],
   ["pass", "1463589-utf"],
@@ -85,9 +87,9 @@ const tests = [
   ["pass", "conditionalprefix"],
 
   ["pass", "digits-in-words"],
-  ["fixme", "dotless-i"], //FIXME Fails on good word "DİYARBAKIR"
+  ["fixme", "dotless-i"], //FIXME 1) ICO gecko-dev returns "" for toTitle().
 
-  ["fixme", "encoding", { 1: "todo", 3: "todo" }], //FIXME Fails on all good words. Aff and dict in ISO-8859-15 (extended Latin-1). Identical test as "i54980", remove one upstream?
+  ["fixme", "encoding", { 1: "todo", 3: "todo" }], //FIXME 2) File .dic is in ISO-8859-15.
 
   ["pass", "flag"],
   ["pass", "flaglong"],
@@ -106,15 +108,15 @@ const tests = [
   ["pass", "i35725"],
   ["pass", "i53643"],
   ["pass", "i54633"],
-  ["fixme", "i54980", { 1: "todo", 3: "todo" }], //FIXME Fails on all good words. Aff and dict in ISO-8859-15 (extended Latin-1). Identical test as "encoding", remove one upstream?
-  ["fixme", "i58202"], //FIXME "BAZ and "BOO" should be good, see "utf8-bom" and "utf8-bom2"
+  ["fixme", "i54980", { 1: "todo", 3: "todo" }], //FIXME 2) File .dic is in ISO-8859-15.
+  ["fixme", "i58202"], //FIXME 1) ICO gecko-dev returns "" for toTitle().
   ["pass", "i68568"],
   ["pass", "i68568utf"],
   ["pass", "iconv"],
   ["pass", "iconv2"],
   ["pass", "ignore"],
   [
-    "fixme", //FIXME Also fails with hunspell_test.js. Encoding, combining character and/or RTL with https://unicode-table.com/en/0652/
+    "fixme", //FIXME 3) RTL with https://unicode-table.com/en/0652/ combining diacritic.
     "ignoreutf",
     {
       1: "todo",
@@ -186,8 +188,8 @@ const tests = [
   ["pass", "sugutf"],
 
   ["pass", "utf8"],
-  ["fixme", "utf8-bom", { 1: "todo" }], //FIXME Also fails with hunspell_test.js. "APÉRITIF" should be good, see "i58202" and "utf8-bom2"
-  ["fixme", "utf8-bom2", { 1: "todo" }], //FIXME Also fails with hunspell_test.js. "APÉRITIF" should be good, see "i58202" and "utf8-bom"
+  ["fixme", "utf8-bom", { 1: "todo" }], //FIXME 1) ICO gecko-dev returns "" for toTitle().
+  ["fixme", "utf8-bom2", { 1: "todo" }], //FIXME 1) ICO gecko-dev returns "" for toTitle().
   ["fail", "utf8-nonbmp", { 1: "todo", 2: "todo", 3: "todo", 4: "todo" }],
   ["pass", "utfcompound"],
 
