@@ -1,90 +1,123 @@
-/* Any copyright is dedicated to the Public Domain.
- * http://creativecommons.org/publicdomain/zero/1.0/
+/* Copyright 2020 Sander van Geloven, Dimitrij Mijoski
+ *
+ * This file is part of Nuspell.
+ *
+ * Nuspell is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Nuspell is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Nuspell.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// "skip", "fixme" or anything else will skip the test
+// "pass" should result in passing of all of the sub test
+// "fail" should result in failing of at least one the sub tests, see
+// https://github.com/nuspell/nuspell/blob/master/tests/CMakeLists.txt
+
+// The todo were left by the original author to implement suggestion testing.
+
 const tests = [
-  ["affixes", "iso-8859-1"],
-  ["condition", "iso-8859-1"],
-  ["condition-utf", "UTF-8"],
-  ["base", "iso-8859-1"],
-  ["base-utf", "UTF-8"],
-  ["allcaps", "iso-8859-1"],
-  ["allcaps-utf", "UTF-8"],
-  ["allcaps2", "iso-8859-1"],
-  ["allcaps3", "iso-8859-1"],
-  ["keepcase", "iso-8859-1"],
-  ["i58202", "iso-8859-1"],
-  ["map", "iso-8859-1"],
-  ["rep", "iso-8859-1"],
-  ["sug", "iso-8859-1"],
-  ["sugutf", "UTF-8"],
-  ["phone", "iso-8859-1"],
-  ["flag", "iso-8859-1"],
-  ["flaglong", "iso-8859-1"],
-  ["flagnum", "iso-8859-1"],
-  ["flagutf8", "UTF-8"],
-  ["slash", "iso-8859-1"],
-  ["forbiddenword", "iso-8859-1"],
-  ["nosuggest", "iso-8859-1"],
-  ["alias", "iso-8859-1"],
-  ["alias2", "iso-8859-1"],
-  ["alias3", "iso-8859-1"],
-  ["breakdefault", "iso-8859-1"],
-  ["break", "UTF-8"],
-  ["needaffix", "iso-8859-1"],
-  ["needaffix2", "iso-8859-1"],
-  ["needaffix3", "iso-8859-1"],
-  ["needaffix4", "iso-8859-1"],
-  ["needaffix5", "iso-8859-1"],
-  ["circumfix", "iso-8859-1"],
-  ["fogemorpheme", "iso-8859-1"],
-  ["onlyincompound", "iso-8859-1"],
-  ["complexprefixes", "iso-8859-1"],
-  ["complexprefixes2", "iso-8859-1"],
-  ["complexprefixesutf", "UTF-8"],
-  ["conditionalprefix", "iso-8859-1"],
-  ["zeroaffix", "iso-8859-1"],
-  ["utf8", "UTF-8"],
-  ["utf8-bom", "UTF-8", { 1: "todo" }],
-  ["utf8-bom2", "UTF-8", { 1: "todo" }],
-  ["utf8-nonbmp", "UTF-8", { 1: "todo", 2: "todo", 3: "todo", 4: "todo" }],
-  ["compoundflag", "iso-8859-1"],
-  ["compoundrule", "iso-8859-1"],
-  ["compoundrule2", "iso-8859-1"],
-  ["compoundrule3", "iso-8859-1"],
-  ["compoundrule4", "iso-8859-1"],
-  ["compoundrule5", "UTF-8"],
-  ["compoundrule6", "iso-8859-1"],
-  ["compoundrule7", "iso-8859-1"],
-  ["compoundrule8", "iso-8859-1"],
-  ["compoundaffix", "iso-8859-1"],
-  ["compoundaffix2", "iso-8859-1"],
-  ["compoundaffix3", "iso-8859-1"],
-  ["checkcompounddup", "iso-8859-1"],
-  ["checkcompoundtriple", "iso-8859-1"],
-  ["simplifiedtriple", "iso-8859-1"],
-  ["checkcompoundrep", "iso-8859-1"],
-  ["checkcompoundcase2", "iso-8859-1"],
-  ["checkcompoundcaseutf", "UTF-8"],
-  ["checkcompoundpattern", "iso-8859-1"],
-  ["checkcompoundpattern2", "iso-8859-1"],
-  ["checkcompoundpattern3", "iso-8859-1"],
-  ["checkcompoundpattern4", "iso-8859-1"],
-  ["utfcompound", "UTF-8"],
-  ["checksharps", "iso-8859-1"],
-  ["checksharpsutf", "UTF-8"],
-  ["germancompounding", "iso-8859-1"],
-  ["germancompoundingold", "iso-8859-1"],
-  ["i35725", "iso-8859-1"],
-  ["i53643", "iso-8859-1"],
-  ["i54633", "iso-8859-1"],
-  ["i54980", "iso-8859-1", { 1: "todo", 3: "todo" }],
-  ["maputf", "UTF-8"],
-  ["reputf", "UTF-8"],
-  ["ignore", "iso-8859-1"],
+  ["pass", "1463589"],
+  ["pass", "1463589-utf"],
+  ["pass", "1592880"],
+  ["pass", "1695964"],
+  ["pass", "1706659"],
+  ["pass", "1975530"],
+
+  ["pass", "2970240"],
+  ["pass", "2970242"],
+  ["pass", "2999225"],
+
+  ["pass", "IJ"],
+
+  ["pass", "affixes"],
+  ["pass", "alias"],
+  ["pass", "alias2"],
+  ["pass", "alias3"],
+  ["pass", "allcaps"],
+  ["pass", "allcaps2"],
+  ["pass", "allcaps3"],
+  ["pass", "allcaps-utf"],
+  ["pass", "arabic"],
+
+  ["pass", "base"],
+  ["fail", "base-utf"], // Should fail on at least good/wrong
+  ["pass", "break"],
+  ["pass", "breakdefault"],
+  ["pass", "breakoff"],
+
+  ["pass", "checkcompoundcase"],
+  ["pass", "checkcompoundcase2"],
+  ["pass", "checkcompoundcaseutf"],
+  ["pass", "checkcompounddup"],
+  ["pass", "checkcompoundpattern"],
+  ["pass", "checkcompoundpattern2"],
+  ["pass", "checkcompoundpattern3"],
+  ["pass", "checkcompoundpattern4"],
+  ["pass", "checkcompoundrep"],
+  ["pass", "checkcompoundtriple"],
+  ["fail", "checksharps"], // Should fail on at least sug
+  ["fail", "checksharpsutf"], // Should fail on at least sug
+  ["pass", "circumfix"],
+  ["skip", "colons-in-words"], // Should test only sug
+  ["pass", "complexprefixes"],
+  ["pass", "complexprefixes2"],
+  ["pass", "complexprefixesutf"],
+  ["pass", "compoundaffix"],
+  ["pass", "compoundaffix2"],
+  ["pass", "compoundaffix3"],
+  ["pass", "compoundflag"],
+  ["pass", "compoundrule"],
+  ["pass", "compoundrule2"],
+  ["pass", "compoundrule3"],
+  ["pass", "compoundrule4"],
+  ["pass", "compoundrule5"],
+  ["pass", "compoundrule6"],
+  ["pass", "compoundrule7"],
+  ["pass", "compoundrule8"],
+  ["pass", "condition"],
+  ["pass", "condition-utf"],
+  ["pass", "conditionalprefix"],
+
+  ["pass", "digits-in-words"],
+  ["fixme", "dotless-i"], //FIXME 1) ICO gecko-dev returns "" for toTitle().
+
+  ["fixme", "encoding", { 1: "todo", 3: "todo" }], //FIXME 2) File .dic is in ISO-8859-15.
+
+  ["pass", "flag"],
+  ["pass", "flaglong"],
+  ["pass", "flagnum"],
+  ["pass", "flagutf8"],
+  ["pass", "fogemorpheme"],
+  ["pass", "forbiddenword"],
+  ["pass", "forceucase"],
+  ["pass", "fullstrip"],
+
+  ["pass", "germancompounding"],
+  ["pass", "germancompoundingold"],
+
+  ["pass", "hu"],
+
+  ["pass", "i35725"],
+  ["pass", "i53643"],
+  ["pass", "i54633"],
+  ["fixme", "i54980", { 1: "todo", 3: "todo" }], //FIXME 2) File .dic is in ISO-8859-15.
+  ["fixme", "i58202"], //FIXME 1) ICO gecko-dev returns "" for toTitle().
+  ["pass", "i68568"],
+  ["pass", "i68568utf"],
+  ["pass", "iconv"],
+  ["pass", "iconv2"],
+  ["pass", "ignore"],
   [
+    "fixme", //FIXME 3) RTL with https://unicode-table.com/en/0652/ combining diacritic.
     "ignoreutf",
-    "UTF-8",
     {
       1: "todo",
       2: "todo",
@@ -96,20 +129,15 @@ const tests = [
       8: "todo",
     },
   ],
-  ["1592880", "iso-8859-1"],
-  ["1695964", "iso-8859-1"],
-  ["1463589", "iso-8859-1"],
-  ["1463589-utf", "UTF-8"],
-  ["IJ", "iso-8859-1"],
-  ["i68568", "iso-8859-1"],
-  ["i68568utf", "UTF-8"],
-  ["1706659", "iso-8859-1"],
-  ["digits-in-words", "iso-8859-1"],
-  //    ["colons-in-words", "iso-8859-1"], Suggestion test only
-  ["ngram-utf-fix", "UTF-8"],
+
+  ["pass", "keepcase"],
+  ["pass", "korean"],
+
+  ["pass", "map"],
+  ["pass", "maputf"],
   [
+    "pass",
     "morph",
-    "us-ascii",
     {
       11: "todo",
       12: "todo",
@@ -130,69 +158,101 @@ const tests = [
       27: "todo",
     },
   ],
-  ["1975530", "UTF-8"],
-  ["fullstrip", "iso-8859-1"],
-  ["iconv", "UTF-8"],
-  ["oconv", "UTF-8"],
-  ["encoding", "iso-8859-1", { 1: "todo", 3: "todo" }],
-  ["korean", "UTF-8"],
-  ["opentaal-forbiddenword1", "UTF-8"],
-  ["opentaal-forbiddenword2", "UTF-8"],
-  ["opentaal-keepcase", "UTF-8"],
-  ["arabic", "UTF-8"],
-  ["2970240", "iso-8859-1"],
-  ["2970242", "iso-8859-1"],
-  ["breakoff", "iso-8859-1"],
-  ["opentaal-cpdpat", "iso-8859-1"],
-  ["opentaal-cpdpat2", "iso-8859-1"],
-  ["2999225", "iso-8859-1"],
-  ["onlyincompound2", "iso-8859-1"],
-  ["forceucase", "iso-8859-1"],
-  ["warn", "iso-8859-1"],
+
+  ["pass", "needaffix"],
+  ["pass", "needaffix2"],
+  ["pass", "needaffix3"],
+  ["pass", "needaffix4"],
+  ["pass", "needaffix5"],
+  ["fail", "nepali"], // Should fail on at least good/wrong
+  ["pass", "ngram-utf-fix"],
+  ["skip", "nosuggest"], // Should fail on at least sug
+
+  ["pass", "oconv"],
+  ["pass", "onlyincompound"],
+  ["pass", "onlyincompound2"],
+  ["pass", "opentaal-cpdpat"],
+  ["pass", "opentaal-cpdpat2"],
+  ["pass", "opentaal-forbiddenword1"],
+  ["pass", "opentaal-forbiddenword2"],
+  ["pass", "opentaal-keepcase"],
+
+  ["skip", "phone"], // Should fail on at least sug, but passes good/wrong
+
+  ["pass", "rep"],
+  ["pass", "reputf"],
+
+  ["pass", "simplifiedtriple"],
+  ["pass", "slash"],
+  ["pass", "sug"],
+  ["pass", "sugutf"],
+
+  ["pass", "utf8"],
+  ["fixme", "utf8-bom", { 1: "todo" }], //FIXME 1) ICO gecko-dev returns "" for toTitle().
+  ["fixme", "utf8-bom2", { 1: "todo" }], //FIXME 1) ICO gecko-dev returns "" for toTitle().
+  ["fail", "utf8-nonbmp", { 1: "todo", 2: "todo", 3: "todo", 4: "todo" }],
+  ["pass", "utfcompound"],
+
+  ["pass", "warn"],
+
+  ["pass", "zeroaffix"],
 ];
 
 // eslint-disable-next-line no-shadow
-function* do_get_file_by_line(file, charset) {
-  dump("getting file by line for file " + file.path + "\n");
-  dump("using charset1" + charset + "\n");
+function* do_get_file_by_line(file) {
+  dump("Getting file by line for file " + file.path + "\n");
   let fis = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(
     Ci.nsIFileInputStream
   );
-  fis.init(file, 0x1 /* READONLY */, 0o444, Ci.nsIFileInputStream.CLOSE_ON_EOF);
+  fis.init(file, 0x01, 0o444, Ci.nsIFileInputStream.CLOSE_ON_EOF);
 
   let lis = Cc["@mozilla.org/intl/converter-input-stream;1"].createInstance(
     Ci.nsIConverterInputStream
   );
-  lis.init(fis, charset, 1024, 0);
+  lis.init(fis, "UTF-8", 1024, 0x0000);
   lis.QueryInterface(Ci.nsIUnicharLineInputStream);
 
   let val = {};
+  let debug_lines = 0;
   while (lis.readLine(val)) {
     yield val.value;
     val = {};
+    debug_lines++;
   }
+  yield val.value;
 }
 
-function do_run_test(checker, name, charset, todo_good, todo_bad) {
+function do_run_test(checker, action, name, todo_good, todo_wrong) {
+  if (action != "pass" && action != "fail") {
+    dump("Skipping test for " + name + "\n");
+    return;
+  }
   dump("\n\n\n\n");
-  dump("running test for " + name + "\n");
+  if (action == "pass") {
+    dump("Running test for " + name + " that should pass\n");
+  } else {
+    dump("Running test for " + name + " that should fail\n");
+  }
   if (!checker) {
-    do_throw("Need spell checker here!");
+    do_throw("Need a spelling checker here");
   }
 
   let good = do_get_file("data/" + name + ".good", true);
-  let bad = do_get_file("data/" + name + ".wrong", true);
+  let wrong = do_get_file("data/" + name + ".wrong", true);
   let sug = do_get_file("data/" + name + ".sug", true);
 
   dump("Need some expected output\n");
-  Assert.ok(good.exists() || bad.exists() || sug.exists());
+  Assert.ok(good.exists() || wrong.exists() || sug.exists());
 
   dump("Setting dictionary to " + name + "\n");
   checker.dictionary = name;
 
+  let positive_fail = false;
+  let did_checks = false;
+
+  var good_counter = 0;
   if (good.exists()) {
-    var good_counter = 0;
-    for (const val of do_get_file_by_line(good, charset)) {
+    for (const val of do_get_file_by_line(good)) {
       let todo = false;
       good_counter++;
       if (todo_good && todo_good[good_counter]) {
@@ -201,31 +261,54 @@ function do_run_test(checker, name, charset, todo_good, todo_bad) {
       }
 
       dump("Expect word " + val + " is spelled correctly\n");
-      if (todo) {
-        todo_check_true(checker.check(val));
+      if (action == "pass") {
+        if (todo) {
+          todo_check_true(checker.check(val));
+        } else {
+          Assert.ok(checker.check(val));
+        }
       } else {
-        Assert.ok(checker.check(val));
+        if (!checker.check(val)) {
+          positive_fail = true;
+        }
       }
+      did_checks = true;
     }
   }
 
-  if (bad.exists()) {
-    var bad_counter = 0;
-    for (const val of do_get_file_by_line(bad, charset)) {
+  var wrong_counter = 0;
+  if (wrong.exists()) {
+    for (const val of do_get_file_by_line(wrong)) {
       let todo = false;
-      bad_counter++;
-      if (todo_bad && todo_bad[bad_counter]) {
+      wrong_counter++;
+      if (todo_wrong && todo_wrong[wrong_counter]) {
         todo = true;
         dump("TODO\n");
       }
 
       dump("Expect word " + val + " is spelled wrong\n");
-      if (todo) {
-        todo_check_false(checker.check(val));
+      if (action == "pass") {
+        if (todo) {
+          todo_check_false(checker.check(val));
+        } else {
+          Assert.ok(!checker.check(val));
+        }
       } else {
-        Assert.ok(!checker.check(val));
+        if (checker.check(val)) {
+          positive_fail = true;
+        }
       }
+      did_checks = true;
     }
+  }
+
+  if (!did_checks) {
+    do_throw("No tests for good or wrong words were done for " + name + "\n");
+  }
+
+  if (action == "fail" && !positive_fail) {
+    dump("Expected fail has occurred properly for " + name + "\n");
+    Assert.ok(false);
   }
 
   // XXXkhuey test suggestions
@@ -236,14 +319,14 @@ function run_test() {
     Ci.mozISpellCheckingEngine
   );
 
-  Assert.ok(!!spellChecker, "Should have a spell checker");
+  Assert.ok(!!spellChecker, "Should have a spelling checker");
   spellChecker.QueryInterface(Ci.mozISpellCheckingEngine);
   let testdir = do_get_file("data/", false);
   spellChecker.loadDictionariesFromDir(testdir);
 
   function do_run_test_closure(test) {
-    let [name, charset, todo_good, todo_bad] = test;
-    do_run_test(spellChecker, name, charset, todo_good, todo_bad);
+    let [action, name, todo_good, todo_wrong] = test;
+    do_run_test(spellChecker, action, name, todo_good, todo_wrong);
   }
 
   tests.forEach(do_run_test_closure);
