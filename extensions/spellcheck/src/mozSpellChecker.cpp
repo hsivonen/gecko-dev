@@ -32,7 +32,6 @@ NS_IMPL_CYCLE_COLLECTION_UNROOT_NATIVE(mozSpellChecker, Release)
 mozSpellChecker::mozSpellChecker() : mEngine(nullptr) {}
 
 mozSpellChecker::~mozSpellChecker() {
-  printf("DEBUG1 Entering mozSpellChecker::~mozSpellChecker()\n");
   if (mPersonalDictionary) {
     //    mPersonalDictionary->Save();
     mPersonalDictionary->EndSession();
@@ -48,7 +47,6 @@ mozSpellChecker::~mozSpellChecker() {
 }
 
 nsresult mozSpellChecker::Init() {
-  printf("DEBUG1 Entering mozSpellChecker::Init()\n");
   mSpellCheckingEngine = nullptr;
   if (XRE_IsContentProcess()) {
     mozilla::dom::ContentChild* contentChild =
@@ -136,7 +134,6 @@ RefPtr<CheckWordPromise> mozSpellChecker::CheckWords(
 
 nsresult mozSpellChecker::CheckWord(const nsAString& aWord, bool* aIsMisspelled,
                                     nsTArray<nsString>* aSuggestions) {
-  printf("DEBUG1 Entering mozSpellChecker::CheckWord(aWord=\"%s\",\n", NS_ConvertUTF16toUTF8(aWord).get());
   nsresult result;
   bool correct;
 
@@ -306,7 +303,6 @@ nsresult mozSpellChecker::GetPersonalDictionary(nsTArray<nsString>* aWordList) {
 
 nsresult mozSpellChecker::GetDictionaryList(
     nsTArray<nsString>* aDictionaryList) {
-  printf("DEBUG1 mozSpellChecker::GetDictionaryList(\n");
   MOZ_ASSERT(aDictionaryList->IsEmpty());
   if (XRE_IsContentProcess()) {
     ContentChild* child = ContentChild::GetSingleton();
@@ -342,7 +338,6 @@ nsresult mozSpellChecker::GetDictionaryList(
 }
 
 nsresult mozSpellChecker::GetCurrentDictionary(nsAString& aDictionary) {
-  printf("DEBUG1 mozSpellChecker::GetCurrentDictionary(aDictionary=\"%s\") {\n", NS_ConvertUTF16toUTF8(aDictionary).get());
   if (XRE_IsContentProcess()) {
     aDictionary = mCurrentDictionary;
     return NS_OK;
@@ -357,7 +352,6 @@ nsresult mozSpellChecker::GetCurrentDictionary(nsAString& aDictionary) {
 }
 
 nsresult mozSpellChecker::SetCurrentDictionary(const nsAString& aDictionary) {
-  printf("DEBUG1 mozSpellChecker::SetCurrentDictionary(aDictionary=\"%s\") {\n", NS_ConvertUTF16toUTF8(aDictionary).get());
   if (XRE_IsContentProcess()) {
     nsString wrappedDict = nsString(aDictionary);
     bool isSuccess;
