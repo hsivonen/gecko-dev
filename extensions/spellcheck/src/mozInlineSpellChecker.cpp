@@ -1237,7 +1237,6 @@ nsresult mozInlineSpellChecker::DoSpellCheckSelection(
 nsresult mozInlineSpellChecker::DoSpellCheck(
     mozInlineSpellWordUtil& aWordUtil, Selection* aSpellCheckSelection,
     const UniquePtr<mozInlineSpellStatus>& aStatus, bool* aDoneChecking) {
-  printf("DEBUG Entering mozInlineSpellChecker::DoSpellCheck(\n");
   *aDoneChecking = true;
 
   if (NS_WARN_IF(!mSpellCheck)) {
@@ -1420,7 +1419,6 @@ class MOZ_RAII AutoChangeNumPendingSpellChecks final {
 void mozInlineSpellChecker::CheckCurrentWordsNoSuggest(
     Selection* aSpellCheckSelection, const nsTArray<nsString>& aWords,
     const nsTArray<NodeOffsetRange>& aRanges) {
-  printf("DEBUG0 Entering mozInlineSpellChecker::CheckCurrentWordsNoSuggest(\n");
   if (aWords.IsEmpty()) {
     return;
   }
