@@ -1,14 +1,5 @@
 {
     "featureFilters": {
-        "brkitr_dictionaries": {
-            "filterType": "exclude"
-        },
-        "brkitr_rules": {
-            "filterType": "exclude"
-        },
-        "brkitr_tree": {
-            "filterType": "exclude"
-        },
         "confusables": {
             "filterType": "exclude"
         },
@@ -194,3 +185,4 @@
         }
     ]
 }
+

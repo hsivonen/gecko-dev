@@ -109,7 +109,7 @@ const tests = [
   ["pass", "i53643"],
   ["pass", "i54633"],
   ["fixme", "i54980", { 1: "todo", 3: "todo" }], //FIXME 2) File .dic is in ISO-8859-15.
-  ["fixme", "i58202"], //FIXME 1) ICO gecko-dev returns "" for toTitle().
+  ["pass", "i58202"], //FIXME 1) ICO gecko-dev returns "" for toTitle().
   ["pass", "i68568"],
   ["pass", "i68568utf"],
   ["pass", "iconv"],
