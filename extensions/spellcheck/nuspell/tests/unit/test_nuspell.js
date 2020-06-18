@@ -16,18 +16,19 @@
  * along with Nuspell.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// "skip", "fixme" or anything else will skip the test
-// "pass" should result in passing of all of the sub test
-// "fail" should result in failing of at least one the sub tests, see
-// https://github.com/nuspell/nuspell/blob/master/tests/CMakeLists.txt
-
-// The todo were left by the original author to implement suggestion testing.
+// "skip" or anything else will skip the test
+// "pass" should pass of all of the sub test
+// "fixme" skips test that should pass
+// "passnosug" should pass of all of the sub test, except sug test *
+// "fixmepassnosug" skips test that should pass, except sug test *
+// "fail" should fail at least one the sub tests *
+// * see https://github.com/nuspell/nuspell/blob/master/tests/CMakeLists.txt
 
 const tests = [
-  ["pass", "1463589"],
-  ["pass", "1463589-utf"],
+  ["fixme", "1463589"], //FIXME Suggestion for "Kuhlschrank" is "ühlschrank"
+  ["fixme", "1463589-utf"], //FIXME Suggestion for "Kuhlschrank" is "ühlschrank"
   ["pass", "1592880"],
-  ["pass", "1695964"],
+  ["fixme", "1695964"], //FIXME Suggestion for "Mall" is "ull"
   ["pass", "1706659"],
   ["pass", "1975530"],
 
@@ -35,20 +36,20 @@ const tests = [
   ["pass", "2970242"],
   ["pass", "2999225"],
 
-  ["pass", "IJ"],
+  ["fixme", "IJ"], //FIXME Suggestion for "Ijs" is ""
 
   ["pass", "affixes"],
   ["pass", "alias"],
   ["pass", "alias2"],
   ["pass", "alias3"],
-  ["pass", "allcaps"],
+  ["fixme", "allcaps"], //FIXME Suggestion for "Openoffice.org" is "penOffice.org"
   ["pass", "allcaps2"],
   ["pass", "allcaps3"],
-  ["pass", "allcaps-utf"],
+  ["fixme", "allcaps-utf"], //FIXME Suggestion for "Openoffice.org" is "penOffice.org"
   ["pass", "arabic"],
 
-  ["pass", "base"],
-  ["fail", "base-utf"], // Should fail on at least good/wrong
+  ["fixme", "base"], //FIXME Suggestion for "Nasa" is "ASA"
+  ["fail", "base-utf"],
   ["pass", "break"],
   ["pass", "breakdefault"],
   ["pass", "breakoff"],
@@ -63,10 +64,10 @@ const tests = [
   ["pass", "checkcompoundpattern4"],
   ["pass", "checkcompoundrep"],
   ["pass", "checkcompoundtriple"],
-  ["fail", "checksharps"], // Should fail on at least sug
-  ["fail", "checksharpsutf"], // Should fail on at least sug
+  ["fixmepassnosug", "checksharps"], //FIXME 1) ICU gecko-dev returns "" for toTitle().
+  ["fixmepassnosug", "checksharpsutf"], //FIXME 1) ICU gecko-dev returns "" for toTitle().
   ["pass", "circumfix"],
-  ["skip", "colons-in-words"], // Should test only sug
+  ["skip", "colons-in-words"], // Has no good, wrong or sug files.
   ["pass", "complexprefixes"],
   ["pass", "complexprefixes2"],
   ["pass", "complexprefixesutf"],
@@ -87,9 +88,9 @@ const tests = [
   ["pass", "conditionalprefix"],
 
   ["pass", "digits-in-words"],
-  ["fixme", "dotless-i"], //FIXME 1) ICO gecko-dev returns "" for toTitle().
+  ["fixme", "dotless-i"], //FIXME 1) ICU gecko-dev returns "" for toTitle().
 
-  ["fixme", "encoding", { 1: "todo", 3: "todo" }], //FIXME 2) File .dic is in ISO-8859-15.
+  ["fixme", "encoding"], //FIXME 2) File .dic is in ISO-8859-15.
 
   ["pass", "flag"],
   ["pass", "flaglong"],
@@ -97,7 +98,7 @@ const tests = [
   ["pass", "flagutf8"],
   ["pass", "fogemorpheme"],
   ["pass", "forbiddenword"],
-  ["pass", "forceucase"],
+  ["fixme", "forceucase"], //FIXME Suggestion "foobaz" is ""
   ["pass", "fullstrip"],
 
   ["pass", "germancompounding"],
@@ -105,92 +106,57 @@ const tests = [
 
   ["pass", "hu"],
 
-  ["pass", "i35725"],
+  ["fixme", "i35725"], //FIXME Suggestion "Permenant" is "ermanent, referment"
   ["pass", "i53643"],
-  ["pass", "i54633"],
-  ["fixme", "i54980", { 1: "todo", 3: "todo" }], //FIXME 2) File .dic is in ISO-8859-15.
-  ["pass", "i58202"], //FIXME 1) ICO gecko-dev returns "" for toTitle().
+  ["fixme", "i54633"], //FIXME Suggestion "Editer" is "diter"
+  ["fixme", "i54980"], //FIXME 2) File .dic is in ISO-8859-15.
+  ["fixme", "i58202"], //FIXME 1) ICU gecko-dev returns "" for toTitle().
   ["pass", "i68568"],
   ["pass", "i68568utf"],
   ["pass", "iconv"],
   ["pass", "iconv2"],
   ["pass", "ignore"],
-  [
-    "fixme", //FIXME 3) RTL with https://unicode-table.com/en/0652/ combining diacritic.
-    "ignoreutf",
-    {
-      1: "todo",
-      2: "todo",
-      3: "todo",
-      4: "todo",
-      5: "todo",
-      6: "todo",
-      7: "todo",
-      8: "todo",
-    },
-  ],
+  ["fixme", "ignoreutf"], //FIXME 3) RTL with https://unicode-table.com/en/0652/ combining diacritic.
 
-  ["pass", "keepcase"],
+  ["fixme", "keepcase"], //FIXME Suggestion "Foo" is ""
   ["pass", "korean"],
 
-  ["pass", "map"],
-  ["pass", "maputf"],
-  [
-    "pass",
-    "morph",
-    {
-      11: "todo",
-      12: "todo",
-      13: "todo",
-      14: "todo",
-      15: "todo",
-      16: "todo",
-      17: "todo",
-      18: "todo",
-      19: "todo",
-      20: "todo",
-      21: "todo",
-      22: "todo",
-      23: "todo",
-      24: "todo",
-      25: "todo",
-      26: "todo",
-      27: "todo",
-    },
-  ],
+  ["fixme", "map"], //FIXME Suggestion ""Fruhstuck" is "rühstück"
+  ["fixme", "maputf"], //FIXME Suggestion "Fruhstuck" is "rühstück"
+  ["fixme", "morph"], //FIXME Split input on spaces 
 
   ["pass", "needaffix"],
   ["pass", "needaffix2"],
   ["pass", "needaffix3"],
   ["pass", "needaffix4"],
   ["pass", "needaffix5"],
-  ["fail", "nepali"], // Should fail on at least good/wrong
-  ["pass", "ngram-utf-fix"],
-  ["skip", "nosuggest"], // Should fail on at least sug
+  ["fail", "nepali"],
+  ["fixme", "ngram-utf-fix"],//FIXME No suggestions for "времячко"
+  ["passnosug", "nosuggest"], // Empty suggestions file
 
   ["pass", "oconv"],
-  ["pass", "onlyincompound"],
+  ["passnosug", "onlyincompound"], // Has empty suggestions file.
   ["pass", "onlyincompound2"],
   ["pass", "opentaal-cpdpat"],
   ["pass", "opentaal-cpdpat2"],
-  ["pass", "opentaal-forbiddenword1"],
-  ["pass", "opentaal-forbiddenword2"],
-  ["pass", "opentaal-keepcase"],
+  ["fixme", "opentaal-forbiddenword1"], //FIXME No suggestions for "foowordbar"
+  ["fixme", "opentaal-forbiddenword2"], //FIXME No suggestions for "foowordbar"
+  ["fixme", "opentaal-keepcase"], //FIXME Suggestions "TV-word" are ", v-word, v- word". Note thatfirst suggestion is empty
 
-  ["skip", "phone"], // Should fail on at least sug, but passes good/wrong
+  ["passnosug", "phone"],
 
-  ["pass", "rep"],
+  ["fixme", "rep"], //FIXME Suggestion file doesn't match up with wrong file
   ["pass", "reputf"],
 
   ["pass", "simplifiedtriple"],
   ["pass", "slash"],
-  ["pass", "sug"],
-  ["pass", "sugutf"],
+  ["fixme", "sug"], //FIXME Suggestion "Ghandi" is ""
+  ["fixme", "sugutf"], //FIXME Suggestion "Ghandi" is ""
 
   ["pass", "utf8"],
-  ["fixme", "utf8-bom", { 1: "todo" }], //FIXME 1) ICO gecko-dev returns "" for toTitle().
-  ["fixme", "utf8-bom2", { 1: "todo" }], //FIXME 1) ICO gecko-dev returns "" for toTitle().
-  ["fail", "utf8-nonbmp", { 1: "todo", 2: "todo", 3: "todo", 4: "todo" }],
+  ["fixme", "utf8-bom"], //FIXME 1) ICU gecko-dev returns "" for toTitle().
+  ["fixme", "utf8-bom2"], //FIXME 1) ICU gecko-dev returns "" for toTitle().
+  ["passnosug", "utf8-nonbmp"],
   ["pass", "utfcompound"],
 
   ["pass", "warn"],
@@ -213,22 +179,21 @@ function* do_get_file_by_line(file) {
   lis.QueryInterface(Ci.nsIUnicharLineInputStream);
 
   let val = {};
-  let debug_lines = 0;
+  // trim(0 is needed for first line in good file for utf8-nonbmp
   while (lis.readLine(val)) {
-    yield val.value;
+    yield val.value.trim();
     val = {};
-    debug_lines++;
   }
-  yield val.value;
+  yield val.value.trim();
 }
 
-function do_run_test(checker, action, name, todo_good, todo_wrong) {
-  if (action != "pass" && action != "fail") {
+function do_run_test(checker, action, name) {
+  if (action != "pass" && action != "passnosug" && action != "fail") {
     dump("Skipping test for " + name + "\n");
     return;
   }
   dump("\n\n\n\n");
-  if (action == "pass") {
+  if (action == "pass" || action == "passnosug") {
     dump("Running test for " + name + " that should pass\n");
   } else {
     dump("Running test for " + name + " that should fail\n");
@@ -248,70 +213,83 @@ function do_run_test(checker, action, name, todo_good, todo_wrong) {
   checker.dictionary = name;
 
   let positive_fail = false;
-  let did_checks = false;
 
+  // Good
   var good_counter = 0;
   if (good.exists()) {
     for (const val of do_get_file_by_line(good)) {
-      let todo = false;
       good_counter++;
-      if (todo_good && todo_good[good_counter]) {
-        todo = true;
-        dump("TODO\n");
-      }
-
-      dump("Expect word " + val + " is spelled correctly\n");
-      if (action == "pass") {
-        if (todo) {
-          todo_check_true(checker.check(val));
-        } else {
-          Assert.ok(checker.check(val));
-        }
+      dump("Expect word \"" + val + "\" is spelled correctly\n");
+      if (action == "pass" || action == "passnosug") {
+        Assert.ok(checker.check(val));
       } else {
         if (!checker.check(val)) {
           positive_fail = true;
         }
       }
-      did_checks = true;
     }
   }
 
+  // Wrong
   var wrong_counter = 0;
   if (wrong.exists()) {
     for (const val of do_get_file_by_line(wrong)) {
-      let todo = false;
       wrong_counter++;
-      if (todo_wrong && todo_wrong[wrong_counter]) {
-        todo = true;
-        dump("TODO\n");
-      }
-
-      dump("Expect word " + val + " is spelled wrong\n");
-      if (action == "pass") {
-        if (todo) {
-          todo_check_false(checker.check(val));
-        } else {
-          Assert.ok(!checker.check(val));
-        }
+      dump("Expect word \"" + val + "\" is spelled wrong\n");
+      if (action == "pass" || action == "passnosug") {
+        Assert.ok(!checker.check(val));
       } else {
         if (checker.check(val)) {
           positive_fail = true;
         }
       }
-      did_checks = true;
     }
   }
 
-  if (!did_checks) {
-    do_throw("No tests for good or wrong words were done for " + name + "\n");
+  // Suggestions (only when tests above are expected to pass)
+  var sug_counter = 0;
+  if (wrong.exists() && sug.exists() && action == "pass") {
+    // wrong file can have more lines than sug file, ignore extra lines in wrong
+    wrongs = do_get_file_by_line(wrong);
+    // iterate over sug file
+    for (const val of do_get_file_by_line(sug)) {
+      sug_counter++;
+      // wrong files tags along via own explicitly called iterator
+      wr = wrongs.next().value;
+      var suggestions = checker.suggest(wr);
+      if (suggestions.length < 1) {
+        dump("Wrongly spelled word \"" + wr
+         + "\" got no suggestions returned which should match \"" + val
+         + "\"\n");
+        Assert.ok(false);
+      }
+      dump("Wrongly spelled word \"" + wr + "\" has suggestions returned \""
+       + suggestions.join(", ") + "\" which should match \"" + val + "\"\n");
+      var index = 0;
+      // iterate over expected suggestions
+      for (const sg of val.split(", ")) {
+        if (index + 1 > suggestions.length) {
+          dump("Wrongly spelled word \"" + wr
+           + "\" got not enough suggestions returned\n");
+          Assert.ok(false);
+        }
+        dump("Expect wrongly spelled word \"" + wr
+         + "\" to have as suggestion #" + index + " \"" + sg + "\"\n");
+        Assert.ok(sg == suggestions[index]);
+        index++;
+      }
+    }
+  }
+
+  // End
+  if (good_counter + wrong_counter == 0) {
+    do_throw("No tests were done for " + name + "\n");
   }
 
   if (action == "fail" && !positive_fail) {
     dump("Expected fail has occurred properly for " + name + "\n");
     Assert.ok(false);
   }
-
-  // XXXkhuey test suggestions
 }
 
 function run_test() {
@@ -325,8 +303,8 @@ function run_test() {
   spellChecker.loadDictionariesFromDir(testdir);
 
   function do_run_test_closure(test) {
-    let [action, name, todo_good, todo_wrong] = test;
-    do_run_test(spellChecker, action, name, todo_good, todo_wrong);
+    let [action, name] = test;
+    do_run_test(spellChecker, action, name);
   }
 
   tests.forEach(do_run_test_closure);
