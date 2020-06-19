@@ -66,7 +66,11 @@ python ${topsrcdir}/js/src/tests/non262/String/make-normalize-generateddata-inpu
 # build a new ICU data file.
 python `dirname $0`/icu_sources_data.py $topsrcdir
 
-hg addremove "${icu_dir}/source" "${icu_dir}/GIT-INFO" ${topsrcdir}/config/external/icu
+if [ $(which hg|grep -c hg) -gt 0 ]; then
+  hg addremove "${icu_dir}/source" "${icu_dir}/GIT-INFO" ${topsrcdir}/config/external/icu
+else
+  echo "Skipping hg addremove"
+fi
 
 # Check local tzdata version.
 `dirname $0`/update-tzdata.sh -c
