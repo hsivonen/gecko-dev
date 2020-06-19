@@ -16,19 +16,17 @@
  * along with Nuspell.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// "skip" or anything else will skip the test
+// "skip", "fixme" or anything else will skip the test
 // "pass" should pass of all of the sub test
-// "fixme" skips test that should pass
 // "passnosug" should pass of all of the sub test, except sug test *
-// "fixmepassnosug" skips test that should pass, except sug test *
 // "fail" should fail at least one the sub tests *
 // * see https://github.com/nuspell/nuspell/blob/master/tests/CMakeLists.txt
 
 const tests = [
-  ["fixme", "1463589"], //FIXME Suggestion for "Kuhlschrank" is "ühlschrank"
-  ["fixme", "1463589-utf"], //FIXME Suggestion for "Kuhlschrank" is "ühlschrank"
+  ["pass", "1463589"],
+  ["pass", "1463589-utf"],
   ["pass", "1592880"],
-  ["fixme", "1695964"], //FIXME Suggestion for "Mall" is "ull"
+  ["pass", "1695964"],
   ["pass", "1706659"],
   ["pass", "1975530"],
 
@@ -36,20 +34,20 @@ const tests = [
   ["pass", "2970242"],
   ["pass", "2999225"],
 
-  ["fixme", "IJ"], //FIXME Suggestion for "Ijs" is ""
+  ["pass", "IJ"],
 
   ["pass", "affixes"],
   ["pass", "alias"],
   ["pass", "alias2"],
   ["pass", "alias3"],
-  ["fixme", "allcaps"], //FIXME Suggestion for "Openoffice.org" is "penOffice.org"
+  ["pass", "allcaps"],
   ["pass", "allcaps2"],
   ["pass", "allcaps3"],
-  ["fixme", "allcaps-utf"], //FIXME Suggestion for "Openoffice.org" is "penOffice.org"
+  ["pass", "allcaps-utf"],
   ["pass", "arabic"],
 
-  ["fixme", "base"], //FIXME Suggestion for "Nasa" is "ASA"
-  ["fail", "base-utf"],
+  ["pass", "base"],
+  ["fail", "base-utf"], // See * above.
   ["pass", "break"],
   ["pass", "breakdefault"],
   ["pass", "breakoff"],
@@ -64,10 +62,10 @@ const tests = [
   ["pass", "checkcompoundpattern4"],
   ["pass", "checkcompoundrep"],
   ["pass", "checkcompoundtriple"],
-  ["fixmepassnosug", "checksharps"], //FIXME 1) ICU gecko-dev returns "" for toTitle().
-  ["fixmepassnosug", "checksharpsutf"], //FIXME 1) ICU gecko-dev returns "" for toTitle().
+  ["passnosug", "checksharps"], // See * above.
+  ["passnosug", "checksharpsutf"], // See * above.
   ["pass", "circumfix"],
-  ["skip", "colons-in-words"], // Has no good, wrong or sug files.
+  ["skip", "colons-in-words"], // No test files.
   ["pass", "complexprefixes"],
   ["pass", "complexprefixes2"],
   ["pass", "complexprefixesutf"],
@@ -88,9 +86,9 @@ const tests = [
   ["pass", "conditionalprefix"],
 
   ["pass", "digits-in-words"],
-  ["fixme", "dotless-i"], //FIXME 1) ICU gecko-dev returns "" for toTitle().
+  ["pass", "dotless-i"],
 
-  ["fixme", "encoding"], //FIXME 2) File .dic is in ISO-8859-15.
+  ["pass", "encoding"],
 
   ["pass", "flag"],
   ["pass", "flaglong"],
@@ -98,7 +96,7 @@ const tests = [
   ["pass", "flagutf8"],
   ["pass", "fogemorpheme"],
   ["pass", "forbiddenword"],
-  ["fixme", "forceucase"], //FIXME Suggestion "foobaz" is ""
+  ["pass", "forceucase"],
   ["pass", "fullstrip"],
 
   ["pass", "germancompounding"],
@@ -106,57 +104,57 @@ const tests = [
 
   ["pass", "hu"],
 
-  ["fixme", "i35725"], //FIXME Suggestion "Permenant" is "ermanent, referment"
+  ["pass", "i35725"],
   ["pass", "i53643"],
-  ["fixme", "i54633"], //FIXME Suggestion "Editer" is "diter"
-  ["fixme", "i54980"], //FIXME 2) File .dic is in ISO-8859-15.
-  ["fixme", "i58202"], //FIXME 1) ICU gecko-dev returns "" for toTitle().
+  ["pass", "i54633"],
+  ["pass", "i54980"],
+  ["pass", "i58202"],
   ["pass", "i68568"],
   ["pass", "i68568utf"],
   ["pass", "iconv"],
   ["pass", "iconv2"],
   ["pass", "ignore"],
-  ["fixme", "ignoreutf"], //FIXME 3) RTL with https://unicode-table.com/en/0652/ combining diacritic.
+  ["pass", "ignoreutf"],
 
-  ["fixme", "keepcase"], //FIXME Suggestion "Foo" is ""
+  ["pass", "keepcase"],
   ["pass", "korean"],
 
-  ["fixme", "map"], //FIXME Suggestion ""Fruhstuck" is "rühstück"
-  ["fixme", "maputf"], //FIXME Suggestion "Fruhstuck" is "rühstück"
-  ["fixme", "morph"], //FIXME Split input on spaces 
+  ["pass", "map"],
+  ["pass", "maputf"],
+  ["skip", "morph"], // Spaces in good file.
 
   ["pass", "needaffix"],
   ["pass", "needaffix2"],
   ["pass", "needaffix3"],
   ["pass", "needaffix4"],
   ["pass", "needaffix5"],
-  ["fail", "nepali"],
-  ["fixme", "ngram-utf-fix"],//FIXME No suggestions for "времячко"
-  ["passnosug", "nosuggest"], // Empty suggestions file
+  ["fail", "nepali"], // See * above.
+  ["passnosug", "ngram-utf-fix"], // No suggestions for "времячко", identical to Nuspell command-line tool.
+  ["passnosug", "nosuggest"], // See * above. Empty suggestions file.
 
   ["pass", "oconv"],
-  ["passnosug", "onlyincompound"], // Has empty suggestions file.
+  ["passnosug", "onlyincompound"], // Empty suggestions file.
   ["pass", "onlyincompound2"],
   ["pass", "opentaal-cpdpat"],
   ["pass", "opentaal-cpdpat2"],
-  ["fixme", "opentaal-forbiddenword1"], //FIXME No suggestions for "foowordbar"
-  ["fixme", "opentaal-forbiddenword2"], //FIXME No suggestions for "foowordbar"
-  ["fixme", "opentaal-keepcase"], //FIXME Suggestions "TV-word" are ", v-word, v- word". Note thatfirst suggestion is empty
+  ["passnosug", "opentaal-forbiddenword1"], // No suggestions for "foowordbar", identical to Nuspell command-line tool.
+  ["passnosug", "opentaal-forbiddenword2"], // No suggestions for "foowordbar", identical to Nuspell command-line tool.
+  ["pass", "opentaal-keepcase"],
 
-  ["passnosug", "phone"],
+  ["passnosug", "phone"], // See * above.
 
-  ["fixme", "rep"], //FIXME Suggestion file doesn't match up with wrong file
+  ["passnosug", "rep"], // Suggestion file does not line up with wrong file.
   ["pass", "reputf"],
 
   ["pass", "simplifiedtriple"],
   ["pass", "slash"],
-  ["fixme", "sug"], //FIXME Suggestion "Ghandi" is ""
-  ["fixme", "sugutf"], //FIXME Suggestion "Ghandi" is ""
+  ["pass", "sug"],
+  ["pass", "sugutf"],
 
   ["pass", "utf8"],
-  ["fixme", "utf8-bom"], //FIXME 1) ICU gecko-dev returns "" for toTitle().
-  ["fixme", "utf8-bom2"], //FIXME 1) ICU gecko-dev returns "" for toTitle().
-  ["passnosug", "utf8-nonbmp"],
+  ["pass", "utf8-bom"],
+  ["pass", "utf8-bom2"],
+  ["passnosug", "utf8-nonbmp"], // See * above.
   ["pass", "utfcompound"],
 
   ["pass", "warn"],
@@ -179,7 +177,7 @@ function* do_get_file_by_line(file) {
   lis.QueryInterface(Ci.nsIUnicharLineInputStream);
 
   let val = {};
-  // trim(0 is needed for first line in good file for utf8-nonbmp
+  // trim() is needed for first line in good file for utf8-nonbmp
   while (lis.readLine(val)) {
     yield val.value.trim();
     val = {};
@@ -258,25 +256,33 @@ function do_run_test(checker, action, name) {
       wr = wrongs.next().value;
       var suggestions = checker.suggest(wr);
       if (suggestions.length < 1) {
-        dump("Wrongly spelled word \"" + wr
-         + "\" got no suggestions returned which should match \"" + val
-         + "\"\n");
-        Assert.ok(false);
-      }
-      dump("Wrongly spelled word \"" + wr + "\" has suggestions returned \""
-       + suggestions.join(", ") + "\" which should match \"" + val + "\"\n");
-      var index = 0;
-      // iterate over expected suggestions
-      for (const sg of val.split(", ")) {
-        if (index + 1 > suggestions.length) {
+        if (val == "") {
           dump("Wrongly spelled word \"" + wr
-           + "\" got not enough suggestions returned\n");
+           + "\" got no suggestions returned which matches empty string \""
+           + val + "\"\n");
+          Assert.ok(true);
+        } else {
+          dump("Wrongly spelled word \"" + wr
+           + "\" got no suggestions returned which should match \"" + val
+           + "\"\n");
           Assert.ok(false);
+          }
+      } else {
+        dump("Wrongly spelled word \"" + wr + "\" has suggestions returned \""
+         + suggestions.join(", ") + "\" which should match \"" + val + "\"\n");
+        var index = 0;
+        // iterate over expected suggestions
+        for (const sg of val.split(", ")) {
+          if (index + 1 > suggestions.length) {
+            dump("Wrongly spelled word \"" + wr
+             + "\" got not enough suggestions returned\n");
+            Assert.ok(false);
+          }
+          dump("Expect wrongly spelled word \"" + wr
+           + "\" to have as suggestion #" + index + " \"" + sg + "\"\n");
+          Assert.ok(sg == suggestions[index]);
+          index++;
         }
-        dump("Expect wrongly spelled word \"" + wr
-         + "\" to have as suggestion #" + index + " \"" + sg + "\"\n");
-        Assert.ok(sg == suggestions[index]);
-        index++;
       }
     }
   }
