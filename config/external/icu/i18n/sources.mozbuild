@@ -3,6 +3,7 @@ SOURCES += [
    '/intl/icu/source/i18n/astro.cpp',
    '/intl/icu/source/i18n/basictz.cpp',
    '/intl/icu/source/i18n/bocsu.cpp',
+   '/intl/icu/source/i18n/brktrans.cpp',
    '/intl/icu/source/i18n/buddhcal.cpp',
    '/intl/icu/source/i18n/calendar.cpp',
    '/intl/icu/source/i18n/cecal.cpp',

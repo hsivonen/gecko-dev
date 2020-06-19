@@ -51,7 +51,6 @@ UNUSED_SOURCES = sets.Set([
     'intl/icu/source/common/ustr_wcs.cpp',
     'intl/icu/source/common/util_props.cpp',
     'intl/icu/source/i18n/anytrans.cpp',
-    'intl/icu/source/i18n/brktrans.cpp',
     'intl/icu/source/i18n/casetrn.cpp',
     'intl/icu/source/i18n/cpdtrans.cpp',
     'intl/icu/source/i18n/esctrn.cpp',
@@ -217,7 +216,6 @@ def update_data_file(topsrcdir):
                      '-DUCONFIG_NO_LEGACY_CONVERSION ' +
                      '-DUCONFIG_NO_TRANSLITERATION ' +
                      '-DUCONFIG_NO_REGULAR_EXPRESSIONS ' +
-                     '-DUCONFIG_NO_BREAK_ITERATION ' +
                      '-DU_CHARSET_IS_UTF8')
     })
 
