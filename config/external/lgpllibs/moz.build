@@ -13,5 +13,8 @@
 GeckoSharedLibrary('lgpllibs', linkage=None)
 SHARED_LIBRARY_NAME = 'lgpllibs'
 
+USE_LIBS += ['icu']
+
 DIRS += ['/extensions/spellcheck/nuspell/src']
+
 DEFFILE = SRCDIR + '/lgpllibs.def'
