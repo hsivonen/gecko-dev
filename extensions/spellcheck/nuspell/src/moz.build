@@ -11,7 +11,7 @@ UNIFIED_SOURCES += [
     'utils.cxx',
 ]
 
-FINAL_LIBRARY = 'xul'
+FINAL_LIBRARY = 'lgpllibs'
 
 # Allowing warnings for third-party code that can be updated from upstream.
 AllowCompilerWarnings()
