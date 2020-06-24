@@ -7,7 +7,6 @@
 UNIFIED_SOURCES += [
     'aff_data.cxx',
     'dictionary.cxx',
-    'finder.cxx',
     'utils.cxx',
 ]
 

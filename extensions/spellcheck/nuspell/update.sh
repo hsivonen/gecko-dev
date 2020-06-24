@@ -23,6 +23,7 @@ cp ${tmpclonedir}/AUTHORS ${nuspell_dir}/src/
 cp ${tmpclonedir}/README.md ${nuspell_dir}/src/
 rm ${nuspell_dir}/src/clang-format.sh
 rm ${nuspell_dir}/src/CMakeLists.txt
+rm ${nuspell_dir}/src/finder.?xx
 rm ${nuspell_dir}/src/main.cxx
 
 rm -rf ${nuspell_dir}/tests/unit/data/*
