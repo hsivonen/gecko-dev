@@ -11,6 +11,8 @@ UNIFIED_SOURCES += [
     'utils.cxx',
 ]
 
+USE_LIBS += ['icu']
+
 FINAL_LIBRARY = 'lgpllibs'
 
 # Allowing warnings for third-party code that can be updated from upstream.

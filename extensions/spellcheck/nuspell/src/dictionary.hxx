@@ -1,4 +1,4 @@
-/* Copyright 2016-2019 Dimitrij Mijoski
+/* Copyright 2016-2020 Dimitrij Mijoski, Sander van Geloven
  *
  * This file is part of Nuspell.
  *
@@ -23,6 +23,23 @@
 
 #ifndef NUSPELL_DICTIONARY_HXX
 #define NUSPELL_DICTIONARY_HXX
+
+#if defined _WIN32 || defined __CYGWIN__
+	#ifdef BUILDING_DLL
+		#define DLL_PUBLIC __declspec(dllexport)
+	#else
+		#define DLL_PUBLIC __declspec(dllimport)
+	#endif
+	#define DLL_LOCAL
+#else
+	#if __GNUC__ >= 4
+		#define DLL_PUBLIC __attribute__ ((visibility ("default")))
+		#define DLL_LOCAL  __attribute__ ((visibility ("hidden")))
+	#else
+		#define DLL_PUBLIC
+		#define DLL_LOCAL
+	#endif
+#endif
 
 #include "aff_data.hxx"
 
@@ -414,7 +431,7 @@ class Dictionary_Loading_Error : public std::runtime_error {
 /**
  * @brief The only important public class
  */
-class Dictionary : private Dict_Base {
+class DLL_PUBLIC Dictionary : private Dict_Base {
 	std::locale external_locale;
 	bool external_locale_known_utf8;
 

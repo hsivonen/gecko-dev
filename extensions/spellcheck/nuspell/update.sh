@@ -35,4 +35,5 @@ for i in $(ls ${nuspell_dir}/tests/unit/data/*_*); do
 done
 
 cd ${nuspell_dir}/src/
-#TODO patch -p5 < ../patches/encodingconverter.patch
+patch -p5 < ../patches/symbolexposure.patch
+#patch -p5 < ../patches/encodingconverter.patch
