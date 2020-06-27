@@ -27,6 +27,13 @@
 #include <unicode/unistr.h>
 #include <unicode/ustring.h>
 
+// The types are declared in utils.hxx. They should be declared
+// before including this header, and we inject their names with defines.
+#define ENCODING_RS_ENCODING nuspell::Encoding_rs
+#define ENCODING_RS_ENCODER nuspell::Encoder
+#define ENCODING_RS_DECODER nuspell::Decoder
+#include "encoding_rs.h"
+
 #if ' ' != 32 || '.' != 46 || 'A' != 65 || 'Z' != 90 || 'a' != 97 || 'z' != 122
 #error "Basic execution character set is not ASCII"
 #elif L' ' != 32 || L'.' != 46 || L'A' != 65 || L'Z' != 90 || L'a' != 97 ||    \

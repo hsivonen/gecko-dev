@@ -36,20 +36,12 @@
 
 #include <unicode/locid.h>
 
-#include "mozilla/NotNull.h"
 namespace nuspell {
-class Enkoding;
+
+// Theese 3 types are declared only for encoding_rs.h
+class Encoding_rs;
 class Encoder;
 class Decoder;
-};
-#define ENCODING_RS_ENCODING nuspell::Enkoding
-#define ENCODING_RS_NOT_NULL_CONST_ENCODING_PTR \
-  mozilla::NotNull<const nuspell::Enkoding*>
-#define ENCODING_RS_ENCODER nuspell::Encoder
-#define ENCODING_RS_DECODER nuspell::Decoder
-#include "encoding_rs.h"
-
-namespace nuspell {
 
 auto wide_to_utf8(const std::wstring& in, std::string& out) -> void;
 auto wide_to_utf8(const std::wstring& in) -> std::string;
@@ -115,7 +107,7 @@ auto has_uppercase_at_compound_word_boundary(const std::wstring& word, size_t i)
     -> bool;
 
 class Encoding_Converter {
-	const Enkoding* cenc = nullptr;
+	const Encoding_rs* cenc = nullptr;
 
       public:
 	Encoding_Converter() = default;
