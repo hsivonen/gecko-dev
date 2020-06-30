@@ -27,13 +27,6 @@
 #include <unicode/unistr.h>
 #include <unicode/ustring.h>
 
-// The types are declared in utils.hxx. They should be declared
-// before including this header, and we inject their names with defines.
-#define ENCODING_RS_ENCODING nuspell::Encoding_rs
-#define ENCODING_RS_ENCODER nuspell::Encoder
-#define ENCODING_RS_DECODER nuspell::Decoder
-#include "encoding_rs.h"
-
 #if ' ' != 32 || '.' != 46 || 'A' != 65 || 'Z' != 90 || 'a' != 97 || 'z' != 122
 #error "Basic execution character set is not ASCII"
 #elif L' ' != 32 || L'.' != 46 || L'A' != 65 || L'Z' != 90 || L'a' != 97 ||    \
@@ -51,6 +44,19 @@ using namespace std;
 #define likely(expr) (expr)
 #define unlikely(expr) (expr)
 #endif
+
+static const void* (*encoding_for_label)(std::string_view label) = nullptr;
+static bool (*utf8_to_utf32)(std::string_view aSrc, std::wstring& aDst) = nullptr;
+static bool (*utf16_to_utf32)(std::u16string_view aSrc, std::wstring& aDst) = nullptr;
+static bool (*encoding_to_utf32)(const void* aEncoding, std::string_view aSrc, std::wstring& aDst) = nullptr;
+
+auto initialize_portability(const void* (*label_lookup)(std::string_view label),
+	                        bool (*convert_utf8)(std::string_view aSrc, std::wstring& aDst),
+	                        bool (*convert_encoding)(const void* aEncoding, std::string_view aSrc, std::wstring& aDst)) -> void {
+	encoding_for_label = label_lookup;
+	utf8_to_utf32 = convert_utf8;
+	encoding_to_utf32 = convert_encoding;
+}
 
 enum class Utf_Error_Handling { ALWAYS_VALID, REPLACE, SKIP };
 
@@ -143,7 +149,7 @@ auto wide_to_utf8(const std::wstring& in) -> std::string
 
 auto utf8_to_wide(const std::string& in, std::wstring& out) -> bool
 {
-	return utf_to_utf_my(in, out);
+	return (*utf8_to_utf32)(in, out);
 }
 auto utf8_to_wide(const std::string& in) -> std::wstring
 {
@@ -477,24 +483,12 @@ auto has_uppercase_at_compound_word_boundary(const std::wstring& word, size_t i)
 
 Encoding_Converter::Encoding_Converter(std::string_view enc_name)
 {
-	auto ptr = reinterpret_cast<const uint8_t*>(enc_name.data());
-	cenc = encoding_for_label_no_replacement(ptr, enc_name.size());
+	cenc = (*encoding_for_label)(enc_name);
 }
 
 auto Encoding_Converter::to_wide(const string& in, wstring& out) -> bool
 {
-	if (cenc == UTF_8_ENCODING)
-		return utf8_to_wide(in, out);
-
-	size_t in_read = in.size();
-	size_t out_written = out.size();
-	auto dec = encoding_new_decoder_without_bom_handling(cenc);
-	auto res = decoder_decode_to_utf16_without_replacement(dec, (const uint8_t*)in.data(), &in_read, (char16_t *)out.data(), &out_written, true);
-	if (res != INPUT_EMPTY) {
-		out.clear();
-		return false;
-	}
-	return true;
+	return (*encoding_to_utf32)(cenc, in, out);
 }
 
 auto Encoding_Converter::to_wide(const string& in) -> wstring

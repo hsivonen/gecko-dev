@@ -127,6 +127,7 @@
 #include "nsThreadManager.h"
 #include "mozilla/css/ImageLoader.h"
 #include "gfxUserFontSet.h"
+#include "mozilla/NuspellPortability.h"
 
 using namespace mozilla;
 using namespace mozilla::net;
@@ -144,6 +145,8 @@ nsresult nsLayoutStatics::Initialize() {
                 1);
 
   nsresult rv;
+
+  InitializeNuspellPortability();
 
   ContentParent::StartUp();
 

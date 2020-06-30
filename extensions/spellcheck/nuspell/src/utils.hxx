@@ -25,6 +25,7 @@
 #define NUSPELL_UTILS_HXX
 
 #include "structures.hxx"
+#include "dictionary.hxx" // for DLL_PUBLIC
 
 #include <locale>
 #include <clocale>
@@ -38,10 +39,9 @@
 
 namespace nuspell {
 
-// Theese 3 types are declared only for encoding_rs.h
-class Encoding_rs;
-class Encoder;
-class Decoder;
+DLL_PUBLIC auto initialize_portability(const void* (*label_lookup)(std::string_view label),
+                                       bool (*convert_utf8)(std::string_view aSrc, std::wstring& aDst),
+                                       bool (*convert_encoding)(const void* aEncoding, std::string_view aSrc, std::wstring& aDst)) -> void;
 
 auto wide_to_utf8(const std::wstring& in, std::string& out) -> void;
 auto wide_to_utf8(const std::wstring& in) -> std::string;
@@ -107,7 +107,7 @@ auto has_uppercase_at_compound_word_boundary(const std::wstring& word, size_t i)
     -> bool;
 
 class Encoding_Converter {
-	const Encoding_rs* cenc = nullptr;
+	const void* cenc = nullptr;
 
       public:
 	Encoding_Converter() = default;
